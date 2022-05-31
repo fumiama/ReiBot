@@ -1,17 +1,3 @@
-# ReiBot
-Lightweight Telegram bot framework
-
-## Instructions
-
-This framework is a simple wrapper for [go-telegram-bot-api](https://github.com/go-telegram-bot-api/telegram-bot-api), aiming to make the event processing easier.
-
-## Example
-
-See under `example` folder or below.
-
-![example](https://user-images.githubusercontent.com/41315874/171180885-c888a031-7797-4b4b-a232-9ff23f031b32.png)
-
-```go
 package main
 
 import (
@@ -60,4 +46,3 @@ func main() {
 		},
 	})
 }
-```

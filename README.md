@@ -7,6 +7,9 @@ This framework is a simple wrapper for [go-telegram-bot-api](https://github.com/
 
 ## Quick Start
 > Here is a plugin-based example
+
+![example](https://user-images.githubusercontent.com/41315874/171227962-199ede01-e41a-4552-8b72-018ee23ad2e2.png)
+
 ```go
 package main
 

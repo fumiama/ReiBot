@@ -18,18 +18,20 @@ type TelegramClient struct {
 // NewTelegramClient ...
 func NewTelegramClient(c *Bot) (tc TelegramClient) {
 	tc.b = *c
-	h := reflect.ValueOf(&tc.b.Handler).Elem()
-	t := h.Type()
-	tc.b.handlers = make(map[string]GeneralHandleType, 16)
-	for i := 0; i < h.NumField(); i++ {
-		f := h.Field(i)
-		if f.IsZero() {
-			continue
+	if tc.b.Handler != nil {
+		h := reflect.ValueOf(tc.b.Handler).Elem()
+		t := h.Type()
+		tc.b.handlers = make(map[string]GeneralHandleType, 16)
+		for i := 0; i < h.NumField(); i++ {
+			f := h.Field(i)
+			if f.IsZero() {
+				continue
+			}
+			tp := t.Field(i).Name[2:]
+			log.Println("[INFO] register handler", tp)
+			handler := f.Interface()
+			tc.b.handlers[tp] = *(*GeneralHandleType)(unsafe.Add(unsafe.Pointer(&handler), unsafe.Sizeof(uintptr(0))))
 		}
-		tp := t.Field(i).Name[2:]
-		log.Println("[INFO] register handler", tp)
-		handler := f.Interface()
-		tc.b.handlers[tp] = *(*GeneralHandleType)(unsafe.Add(unsafe.Pointer(&handler), unsafe.Sizeof(uintptr(0))))
 	}
 	return
 }

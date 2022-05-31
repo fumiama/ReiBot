@@ -18,6 +18,8 @@ type Bot struct {
 	Debug bool `json:"debug"`
 	// Handler 注册对各种事件的处理
 	Handler Handler
+	// handlers 方便调用的 handler
+	handlers map[string]GeneralHandleType
 }
 
 // Start clients without blocking

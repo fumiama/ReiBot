@@ -3,7 +3,6 @@ package rei
 import (
 	"log"
 	"reflect"
-	"unsafe"
 
 	tgba "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -21,18 +20,17 @@ type Event struct {
 func (tc *TelegramClient) processEvent(update tgba.Update) {
 	v := reflect.ValueOf(&update).Elem()
 	t := reflect.ValueOf(&update).Elem().Type()
-	h := reflect.ValueOf(tc.b.Handler)
 	for i := 1; i < v.NumField(); i++ {
 		f := v.Field(i)
 		if f.IsZero() {
 			continue
 		}
-		m := h.FieldByName("On" + t.Field(i).Name)
-		if m.IsZero() {
+		tp := t.Field(i).Name
+		h, ok := tc.b.handlers[tp]
+		if !ok {
 			continue
 		}
-		log.Println("[INFO] processEvent call", "On"+t.Field(i).Name)
-		handler := m.Interface()
-		go (*(*GeneralHandleType)(unsafe.Add(unsafe.Pointer(&handler), unsafe.Sizeof(uintptr(0)))))(update.UpdateID, tc, f.UnsafePointer())
+		log.Println("[INFO] process", tp, "event")
+		go h(update.UpdateID, tc, f.UnsafePointer())
 	}
 }

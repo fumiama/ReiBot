@@ -9,13 +9,15 @@ import (
 type Bot struct {
 	// Token bot 的 token
 	//    see https://core.telegram.org/bots#3-how-do-i-create-a-bot
-	Token string `json:"token"`
+	Token string
 	// Buffer 控制消息队列的长度
-	Buffer int `json:"buffer"`
+	Buffer int
 	// UpdateConfig 配置消息获取
 	tgba.UpdateConfig
+	// SuperUsers 超级用户
+	SuperUsers []int64
 	// Debug 控制调试信息的输出与否
-	Debug bool `json:"debug"`
+	Debug bool
 	// Handler 注册对各种事件的处理
 	Handler *Handler
 	// handlers 方便调用的 handler

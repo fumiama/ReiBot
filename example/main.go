@@ -1,19 +1,17 @@
 package main
 
 import (
+	_ "github.com/fumiama/ReiBot/example/echo"
+
 	rei "github.com/fumiama/ReiBot"
 	tgba "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func main() {
-	rei.OnMessagePrefix("echo").SetBlock(true).SecondPriority().
+	rei.OnMessageFullMatch("help").SetBlock(true).SecondPriority().
 		Handle(func(ctx *rei.Ctx) {
-			args := ctx.State["args"].(string)
-			if args == "" {
-				return
-			}
 			msg := ctx.Value.(*tgba.Message)
-			ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, args))
+			ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, "echo string"))
 		})
 	rei.Run(rei.Bot{
 		Token:  "",

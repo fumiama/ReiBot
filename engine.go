@@ -159,16 +159,192 @@ func (e *Engine) OnChatJoinRequest(rules ...Rule) *Matcher { return e.On("ChatJo
 // OnChatJoinRequest ...
 func OnChatJoinRequest(rules ...Rule) *Matcher { return On("ChatJoinRequest", rules...) }
 
-// OnPrefix 前缀触发器
+// OnMessagePrefix 前缀触发器
 func OnMessagePrefix(prefix string, rules ...Rule) *Matcher {
 	return defaultEngine.OnMessagePrefix(prefix, rules...)
 }
 
-// OnPrefix 前缀触发器
+// OnMessagePrefix 前缀触发器
 func (e *Engine) OnMessagePrefix(prefix string, rules ...Rule) *Matcher {
 	matcher := &Matcher{
 		Type:   "Message",
 		Rules:  append([]Rule{PrefixRule(prefix)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnMessageSuffix 后缀触发器
+func OnMessageSuffix(suffix string, rules ...Rule) *Matcher {
+	return defaultEngine.OnMessageSuffix(suffix, rules...)
+}
+
+// OnMessageSuffix 后缀触发器
+func (e *Engine) OnMessageSuffix(suffix string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "Message",
+		Rules:  append([]Rule{SuffixRule(suffix)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnMessageCommand 命令触发器
+func OnMessageCommand(commands string, rules ...Rule) *Matcher {
+	return defaultEngine.OnMessageCommand(commands, rules...)
+}
+
+// OnMessageCommand 命令触发器
+func (e *Engine) OnMessageCommand(commands string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "Message",
+		Rules:  append([]Rule{CommandRule(commands)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnMessageRegex 正则触发器
+func OnMessageRegex(regexPattern string, rules ...Rule) *Matcher {
+	return defaultEngine.OnMessageRegex(regexPattern, rules...)
+}
+
+// OnRegex 正则触发器
+func (e *Engine) OnMessageRegex(regexPattern string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "Message",
+		Rules:  append([]Rule{RegexRule(regexPattern)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnMessageKeyword 关键词触发器
+func OnMessageKeyword(keyword string, rules ...Rule) *Matcher {
+	return defaultEngine.OnMessageKeyword(keyword, rules...)
+}
+
+// OnKeyword 关键词触发器
+func (e *Engine) OnMessageKeyword(keyword string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "Message",
+		Rules:  append([]Rule{KeywordRule(keyword)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnMessageFullMatch 完全匹配触发器
+func OnMessageFullMatch(src string, rules ...Rule) *Matcher {
+	return defaultEngine.OnMessageFullMatch(src, rules...)
+}
+
+// OnMessageFullMatch 完全匹配触发器
+func (e *Engine) OnMessageFullMatch(src string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "Message",
+		Rules:  append([]Rule{FullMatchRule(src)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnMessageFullMatchGroup 完全匹配触发器组
+func OnMessageFullMatchGroup(src []string, rules ...Rule) *Matcher {
+	return defaultEngine.OnMessageFullMatchGroup(src, rules...)
+}
+
+// OnMessageFullMatchGroup 完全匹配触发器组
+func (e *Engine) OnMessageFullMatchGroup(src []string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "Message",
+		Rules:  append([]Rule{FullMatchRule(src...)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnMessageKeywordGroup 关键词触发器组
+func OnMessageKeywordGroup(keywords []string, rules ...Rule) *Matcher {
+	return defaultEngine.OnMessageKeywordGroup(keywords, rules...)
+}
+
+// OnMessageKeywordGroup 关键词触发器组
+func (e *Engine) OnMessageKeywordGroup(keywords []string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "Message",
+		Rules:  append([]Rule{KeywordRule(keywords...)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnMessageCommandGroup 命令触发器组
+func OnMessageCommandGroup(commands []string, rules ...Rule) *Matcher {
+	return defaultEngine.OnMessageCommandGroup(commands, rules...)
+}
+
+// OnMessageCommandGroup 命令触发器组
+func (e *Engine) OnMessageCommandGroup(commands []string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "Message",
+		Rules:  append([]Rule{CommandRule(commands...)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnMessagePrefixGroup 前缀触发器组
+func OnMessagePrefixGroup(prefix []string, rules ...Rule) *Matcher {
+	return defaultEngine.OnMessagePrefixGroup(prefix, rules...)
+}
+
+// OnMessagePrefixGroup 前缀触发器组
+func (e *Engine) OnMessagePrefixGroup(prefix []string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "Message",
+		Rules:  append([]Rule{PrefixRule(prefix...)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnMessageSuffixGroup 后缀触发器组
+func OnMessageSuffixGroup(suffix []string, rules ...Rule) *Matcher {
+	return defaultEngine.OnMessageSuffixGroup(suffix, rules...)
+}
+
+// OnMessageSuffixGroup 后缀触发器组
+func (e *Engine) OnMessageSuffixGroup(suffix []string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "Message",
+		Rules:  append([]Rule{SuffixRule(suffix...)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnMessageShell shell命令触发器
+func OnMessageShell(command string, model interface{}, rules ...Rule) *Matcher {
+	return defaultEngine.OnMessageShell(command, model, rules...)
+}
+
+// OnMessageShell shell命令触发器
+func (e *Engine) OnMessageShell(command string, model interface{}, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "Message",
+		Rules:  append([]Rule{ShellRule(command, model)}, rules...),
 		Engine: e,
 	}
 	e.matchers = append(e.matchers, matcher)

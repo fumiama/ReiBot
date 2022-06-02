@@ -1,5 +1,14 @@
-# ReiBot
-Lightweight Telegram bot framework
+<div align="center">
+  <a href="https://crypko.ai/crypko/GtWYDpVMx5GYm/">
+  <img src=".github/Misaki.png" alt="看板娘" width = "400">
+  </a><br>
+
+  <h1>ReiBot</h1>
+  Lightweight Telegram bot framework<br><br>
+
+  <img src="http://cmoe.azurewebsites.net/cmoe?name=ReiBot&theme=r34" /><br>
+
+</div>
 
 ## Instructions
 
@@ -8,7 +17,7 @@ This framework is a simple wrapper for [go-telegram-bot-api](https://github.com/
 ## Quick Start
 > Here is a plugin-based example
 
-![example](https://user-images.githubusercontent.com/41315874/171227962-199ede01-e41a-4552-8b72-018ee23ad2e2.png)
+![plugin-based example](https://user-images.githubusercontent.com/41315874/171567343-f61eba4e-2bc9-49b3-af05-6446f0a73c54.png)
 
 ```go
 package main
@@ -45,7 +54,7 @@ func main() {
 
 > If Handler in Bot is implemented, the plugin function will be disabled.
 
-![example](https://user-images.githubusercontent.com/41315874/171180885-c888a031-7797-4b4b-a232-9ff23f031b32.png)
+![event-based example](https://user-images.githubusercontent.com/41315874/171567349-5ff59cfa-cc3a-44a8-8158-6c76c8d433b7.png)
 
 ```go
 package main

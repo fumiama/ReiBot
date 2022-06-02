@@ -22,7 +22,7 @@ func NewFutureEvent(Type string, Priority int, Block bool, rule ...Rule) *Future
 func (m *Matcher) FutureEvent(Type string, rule ...Rule) *FutureEvent {
 	return &FutureEvent{
 		Type:     Type,
-		Priority: m.Priority,
+		Priority: m.priority,
 		Block:    m.Block,
 		Rule:     rule,
 	}
@@ -36,7 +36,7 @@ func (n *FutureEvent) Next() <-chan *Ctx {
 	StoreTempMatcher(&Matcher{
 		Type:     n.Type,
 		Block:    n.Block,
-		Priority: n.Priority,
+		priority: n.Priority,
 		Rules:    n.Rule,
 		Engine:   defaultEngine,
 		Process: func(ctx *Ctx) {
@@ -58,7 +58,7 @@ func (n *FutureEvent) Repeat() (recv <-chan *Ctx, cancel func()) {
 		matcher := StoreMatcher(&Matcher{
 			Type:     n.Type,
 			Block:    n.Block,
-			Priority: n.Priority,
+			priority: n.Priority,
 			Rules:    n.Rule,
 			Engine:   defaultEngine,
 			Process: func(ctx *Ctx) {

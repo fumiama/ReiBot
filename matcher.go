@@ -3,6 +3,8 @@ package rei
 import (
 	"sort"
 	"sync"
+
+	"github.com/wdvxdr1123/ZeroBot/extension/rate"
 )
 
 type (
@@ -18,8 +20,8 @@ type Matcher struct {
 	Temp bool
 	// Block 是否阻断后续 Matcher，为 true 时当前Matcher匹配成功后，后续Matcher不参与匹配
 	Block bool
-	// Priority 优先级，越小优先级越高
-	Priority int
+	// priority 优先级，越小优先级越高
+	priority int
 	// Event 当前匹配到的事件
 	Event *Event
 	// Type 匹配的事件类型
@@ -44,7 +46,7 @@ type State map[string]interface{}
 
 func sortMatcher(typ string) {
 	sort.Slice(matcherMap[typ], func(i, j int) bool { // 按优先级排序
-		return matcherMap[typ][i].Priority < matcherMap[typ][j].Priority
+		return matcherMap[typ][i].priority < matcherMap[typ][j].priority
 	})
 }
 
@@ -54,33 +56,20 @@ func (m *Matcher) SetBlock(block bool) *Matcher {
 	return m
 }
 
-// SetPriority 设置当前 Matcher 优先级
-func (m *Matcher) SetPriority(priority int) *Matcher {
-	matcherLock.Lock()
-	defer matcherLock.Unlock()
-	m.Priority = priority
-	sortMatcher(m.Type)
-	return m
-}
-
-// FirstPriority 设置当前 Matcher 优先级 - 0
-func (m *Matcher) FirstPriority() *Matcher {
-	return m.SetPriority(0)
-}
-
-// SecondPriority 设置当前 Matcher 优先级 - 1
-func (m *Matcher) SecondPriority() *Matcher {
-	return m.SetPriority(1)
-}
-
-// ThirdPriority 设置当前 Matcher 优先级 - 2
-func (m *Matcher) ThirdPriority() *Matcher {
-	return m.SetPriority(2)
-}
-
-// BindEngine bind the matcher to a engine
-func (m *Matcher) BindEngine(e *Engine) *Matcher {
-	m.Engine = e
+// Limit 限速器
+//    postfn 当请求被拒绝时的操作
+func (m *Matcher) Limit(limiterfn func(*Ctx) *rate.Limiter, postfn ...func(*Ctx)) *Matcher {
+	m.Rules = append(m.Rules, func(ctx *Ctx) bool {
+		if limiterfn(ctx).Acquire() {
+			return true
+		}
+		if len(postfn) > 0 {
+			for _, fn := range postfn {
+				fn(ctx)
+			}
+		}
+		return false
+	})
 	return m
 }
 
@@ -116,7 +105,7 @@ func (m *Matcher) copy() *Matcher {
 		Type:     m.Type,
 		Rules:    m.Rules,
 		Block:    m.Block,
-		Priority: m.Priority,
+		priority: m.priority,
 		Process:  m.Process,
 		Temp:     m.Temp,
 		Engine:   m.Engine,

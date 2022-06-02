@@ -53,6 +53,12 @@ func (e *Engine) UsePostHandler(handler ...Process) {
 	e.postHandler = append(e.postHandler, handler...)
 }
 
+// ApplySingle 应用反并发
+func (e *Engine) ApplySingle(s *Single[int64]) *Engine {
+	s.Apply(e)
+	return e
+}
+
 // On 添加新的指定消息类型的匹配器(默认Engine)
 func On(typ string, rules ...Rule) *Matcher { return defaultEngine.On(typ, rules...) }
 

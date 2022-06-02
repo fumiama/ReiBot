@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	rei.OnMessagePrefix("echo").SetBlock(true).SecondPriority().
+	rei.OnMessagePrefix("echo").SetBlock(true).
 		Handle(func(ctx *rei.Ctx) {
 			args := ctx.State["args"].(string)
 			if args == "" {

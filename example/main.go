@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	rei.OnMessageFullMatch("help").SetBlock(true).SecondPriority().
+	rei.OnMessageFullMatch("help").SetBlock(true).
 		Handle(func(ctx *rei.Ctx) {
 			msg := ctx.Value.(*tgba.Message)
 			_, _ = ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, "echo string"))

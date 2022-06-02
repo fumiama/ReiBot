@@ -106,3 +106,7 @@ func main() {
 	})
 }
 ```
+
+## Thanks
+
+- [ZeroBot](https://github.com/wdvxdr1123/ZeroBot)

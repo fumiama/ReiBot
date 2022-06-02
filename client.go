@@ -3,16 +3,26 @@ package rei
 import (
 	"log"
 	"reflect"
+	"sync"
 	"time"
 	"unsafe"
 
 	tgba "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/sirupsen/logrus"
 )
 
 // TelegramClient ...
 type TelegramClient struct {
 	tgba.BotAPI
 	b Bot
+}
+
+var logsetter = &sync.Once{}
+
+func init() {
+	logsetter.Do(func() {
+		tgba.SetLogger(logrus.StandardLogger())
+	})
 }
 
 // NewTelegramClient ...

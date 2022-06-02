@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://crypko.ai/crypko/GtWYDpVMx5GYm/">
-  <img src=".github/Misaki.png" alt="看板娘" width = "400">
+  <img src=".github/Misaki.png" alt="看板娘" width = "256">
   </a><br>
 
   <h1>ReiBot</h1>

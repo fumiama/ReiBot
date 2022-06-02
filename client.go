@@ -21,7 +21,7 @@ var logsetter = &sync.Once{}
 
 func init() {
 	logsetter.Do(func() {
-		tgba.SetLogger(logrus.StandardLogger())
+		_ = tgba.SetLogger(logrus.StandardLogger())
 	})
 }
 

@@ -11,7 +11,7 @@ func main() {
 	rei.OnMessageFullMatch("help").SetBlock(true).SecondPriority().
 		Handle(func(ctx *rei.Ctx) {
 			msg := ctx.Value.(*tgba.Message)
-			ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, "echo string"))
+			_, _ = ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, "echo string"))
 		})
 	rei.Run(rei.Bot{
 		Token:  "",

@@ -13,6 +13,6 @@ func init() {
 				return
 			}
 			msg := ctx.Value.(*tgba.Message)
-			ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, args))
+			_, _ = ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, args))
 		})
 }

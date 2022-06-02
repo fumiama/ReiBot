@@ -199,6 +199,15 @@ func CheckChat(chatId ...int64) Rule {
 	}
 }
 
+// OnlyPrivate requires that the ctx.Event is private message
+func OnlyPrivate(ctx *Ctx) bool {
+	msg, ok := ctx.Value.(*tgba.Message)
+	if !ok || msg.Chat == nil { // 确保无空
+		return false
+	}
+	return msg.Chat.Type == "private"
+}
+
 // SuperUserPermission only triggered by the bot's owner
 func SuperUserPermission(ctx *Ctx) bool {
 	msg, ok := ctx.Value.(*tgba.Message)

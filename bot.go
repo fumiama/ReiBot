@@ -54,3 +54,21 @@ func Run(bots ...Bot) {
 	tc.Connect()
 	tc.Listen()
 }
+
+// GetBot 获取指定的bot (Ctx) 实例
+func GetBot(id int64) *Ctx {
+	caller, ok := clients.Load(id)
+	if !ok {
+		return nil
+	}
+	return &Ctx{Caller: caller}
+}
+
+// RangeBot 遍历所有bot (Ctx)实例
+//
+// 单次操作返回 true 则继续遍历，否则退出
+func RangeBot(iter func(id int64, ctx *Ctx) bool) {
+	clients.Range(func(key int64, value *TelegramClient) bool {
+		return iter(key, &Ctx{Caller: value})
+	})
+}

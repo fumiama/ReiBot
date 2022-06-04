@@ -7,6 +7,7 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/RomiChan/syncx"
 	tgba "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/sirupsen/logrus"
 )
@@ -17,7 +18,10 @@ type TelegramClient struct {
 	b Bot
 }
 
-var logsetter = &sync.Once{}
+var (
+	logsetter = &sync.Once{}
+	clients   = syncx.Map[int64, *TelegramClient]{}
+)
 
 func init() {
 	logsetter.Do(func() {
@@ -61,6 +65,7 @@ func (tc *TelegramClient) Connect() {
 		tc.Buffer = tc.b.Buffer
 		break
 	}
+	clients.Store(tc.Self.ID, tc)
 	log.Println("[INFO] 连接到Telegram服务器成功, token:", tc.b.Token)
 }
 
@@ -73,6 +78,7 @@ func (tc *TelegramClient) Listen() {
 			tc.processEvent(update)
 		}
 		log.Println("[WARN] Telegram服务器连接断开...")
+		clients.Delete(tc.Self.ID)
 		time.Sleep(time.Millisecond * time.Duration(3))
 		tc.Connect()
 	}

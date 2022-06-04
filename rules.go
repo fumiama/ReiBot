@@ -208,6 +208,42 @@ func OnlyPrivate(ctx *Ctx) bool {
 	return msg.Chat.Type == "private"
 }
 
+// OnlyGroup requires that the ctx.Event is group message
+func OnlyGroup(ctx *Ctx) bool {
+	msg, ok := ctx.Value.(*tgba.Message)
+	if !ok || msg.Chat == nil { // 确保无空
+		return false
+	}
+	return msg.Chat.Type == "group"
+}
+
+// OnlySuperGroup requires that the ctx.Event is supergroup message
+func OnlySuperGroup(ctx *Ctx) bool {
+	msg, ok := ctx.Value.(*tgba.Message)
+	if !ok || msg.Chat == nil { // 确保无空
+		return false
+	}
+	return msg.Chat.Type == "supergroup"
+}
+
+// OnlyPublic requires that the ctx.Event is group or supergroup message
+func OnlyPublic(ctx *Ctx) bool {
+	msg, ok := ctx.Value.(*tgba.Message)
+	if !ok || msg.Chat == nil { // 确保无空
+		return false
+	}
+	return msg.Chat.Type == "supergroup" || msg.Chat.Type == "group"
+}
+
+// OnlyChannel requires that the ctx.Event is channel message
+func OnlyChannel(ctx *Ctx) bool {
+	msg, ok := ctx.Value.(*tgba.Message)
+	if !ok || msg.Chat == nil { // 确保无空
+		return false
+	}
+	return msg.Chat.Type == "channel"
+}
+
 // SuperUserPermission only triggered by the bot's owner
 func SuperUserPermission(ctx *Ctx) bool {
 	msg, ok := ctx.Value.(*tgba.Message)

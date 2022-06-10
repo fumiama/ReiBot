@@ -20,17 +20,12 @@ import (
 func newctrl(service string, o *ctrl.Options[*Ctx]) Rule {
 	c := m.NewControl(service, o)
 	return func(ctx *Ctx) bool {
-		msg, ok := ctx.Value.(*tgba.Message)
-		if !ok {
-			return false
-		}
 		ctx.State["manager"] = c
-		ctx.Message = msg
 		var gid int64 = 0
-		if !msg.Chat.IsPrivate() {
-			gid = msg.Chat.ID
+		if !ctx.Message.Chat.IsPrivate() {
+			gid = ctx.Message.Chat.ID
 		}
-		return c.Handler(uintptr(unsafe.Pointer(ctx)), gid, msg.From.ID)
+		return c.Handler(uintptr(unsafe.Pointer(ctx)), gid, ctx.Message.From.ID)
 	}
 }
 

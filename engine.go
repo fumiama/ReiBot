@@ -226,7 +226,7 @@ func OnMessageRegex(regexPattern string, rules ...Rule) *Matcher {
 	return defaultEngine.OnMessageRegex(regexPattern, rules...)
 }
 
-// OnRegex 正则触发器
+// OnMessageRegex 正则触发器
 func (e *Engine) OnMessageRegex(regexPattern string, rules ...Rule) *Matcher {
 	matcher := &Matcher{
 		Type:   "Message",
@@ -359,6 +359,17 @@ func (e *Engine) OnMessageShell(command string, model interface{}, rules ...Rule
 	matcher := &Matcher{
 		Type:   "Message",
 		Rules:  append([]Rule{ShellRule(command, model)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnCallbackQueryRegex 正则触发器
+func (e *Engine) OnCallbackQueryRegex(regexPattern string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "CallbackQuery",
+		Rules:  append([]Rule{RegexRule(regexPattern)}, rules...),
 		Engine: e,
 	}
 	e.matchers = append(e.matchers, matcher)

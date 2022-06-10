@@ -1,10 +1,10 @@
 package rei
 
 import (
-	"log"
 	"reflect"
 
 	tgba "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	log "github.com/sirupsen/logrus"
 )
 
 // Event ...
@@ -33,7 +33,7 @@ func (tc *TelegramClient) processEvent(update tgba.Update) {
 				matcherLock.RUnlock()
 				continue
 			}
-			log.Println("[INFO] pass", tp, "event to plugins")
+			log.Println("pass", tp, "event to plugins")
 			matchers := make([]*Matcher, n)
 			copy(matchers, matcherMap[tp])
 			matcherLock.RUnlock()
@@ -46,8 +46,11 @@ func (tc *TelegramClient) processEvent(update tgba.Update) {
 				State:  State{},
 				Caller: tc,
 			}
-			if tp == "Message" {
+			switch tp {
+			case "Message":
 				ctx.Message = (*tgba.Message)(f.UnsafePointer())
+			case "CallbackQuery":
+				ctx.Message = (*tgba.CallbackQuery)(f.UnsafePointer()).Message
 			}
 			match(ctx, matchers)
 			continue
@@ -56,7 +59,7 @@ func (tc *TelegramClient) processEvent(update tgba.Update) {
 		if !ok {
 			continue
 		}
-		log.Println("[INFO] process", tp, "event")
+		log.Println("process", tp, "event")
 		go h(update.UpdateID, tc, f.UnsafePointer())
 	}
 }

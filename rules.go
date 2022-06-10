@@ -100,15 +100,28 @@ func CommandRule(commands ...string) Rule {
 func RegexRule(regexPattern string) Rule {
 	regex := regexp.MustCompile(regexPattern)
 	return func(ctx *Ctx) bool {
-		msg, ok := ctx.Value.(*tgba.Message)
-		if !ok || msg.Text == "" { // 确保无空
+		switch msg := ctx.Value.(type) {
+		case *tgba.Message:
+			if msg.Text == "" { // 确保无空
+				return false
+			}
+			if matched := regex.FindStringSubmatch(msg.Text); matched != nil {
+				ctx.State["regex_matched"] = matched
+				return true
+			}
+			return false
+		case *tgba.CallbackQuery:
+			if msg.Data == "" {
+				return false
+			}
+			if matched := regex.FindStringSubmatch(msg.Data); matched != nil {
+				ctx.State["regex_matched"] = matched
+				return true
+			}
+			return false
+		default:
 			return false
 		}
-		if matched := regex.FindStringSubmatch(msg.Text); matched != nil {
-			ctx.State["regex_matched"] = matched
-			return true
-		}
-		return false
 	}
 }
 

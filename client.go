@@ -1,7 +1,6 @@
 package rei
 
 import (
-	"log"
 	"reflect"
 	"sync"
 	"time"
@@ -9,7 +8,7 @@ import (
 
 	"github.com/RomiChan/syncx"
 	tgba "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 // TelegramClient ...
@@ -25,7 +24,7 @@ var (
 
 func init() {
 	logsetter.Do(func() {
-		_ = tgba.SetLogger(logrus.StandardLogger())
+		_ = tgba.SetLogger(log.StandardLogger())
 	})
 }
 
@@ -42,7 +41,7 @@ func NewTelegramClient(c *Bot) (tc TelegramClient) {
 				continue
 			}
 			tp := t.Field(i).Name[2:]
-			log.Println("[INFO] register handler", tp)
+			log.Println("register handler", tp)
 			handler := f.Interface()
 			tc.b.handlers[tp] = *(*GeneralHandleType)(unsafe.Add(unsafe.Pointer(&handler), unsafe.Sizeof(uintptr(0))))
 		}
@@ -52,11 +51,11 @@ func NewTelegramClient(c *Bot) (tc TelegramClient) {
 
 // Connect ...
 func (tc *TelegramClient) Connect() {
-	log.Println("[INFO] 开始尝试连接到Telegram服务器, token:", tc.b.Token)
+	log.Println("开始尝试连接到Telegram服务器, token:", tc.b.Token)
 	for {
 		ba, err := tgba.NewBotAPI(tc.b.Token)
 		if err != nil {
-			log.Println("[WARN] 连接到Telegram服务器时出现错误:", err, ", token:", tc.b.Token)
+			log.Warnln("连接到Telegram服务器时出现错误:", err, ", token:", tc.b.Token)
 			time.Sleep(2 * time.Second) // 等待两秒后重新连接
 			continue
 		}
@@ -66,18 +65,18 @@ func (tc *TelegramClient) Connect() {
 		break
 	}
 	clients.Store(tc.Self.ID, tc)
-	log.Println("[INFO] 连接到Telegram服务器成功, token:", tc.b.Token)
+	log.Println("连接到Telegram服务器成功, token:", tc.b.Token)
 }
 
 // Listen 开始监听事件
 func (tc *TelegramClient) Listen() {
-	log.Println("[INFO] 开始监听", tc.Self.UserName, "的事件")
+	log.Println("开始监听", tc.Self.UserName, "的事件")
 	for {
 		updates := tc.GetUpdatesChan(tc.b.UpdateConfig)
 		for update := range updates {
 			tc.processEvent(update)
 		}
-		log.Println("[WARN] Telegram服务器连接断开...")
+		log.Warnln("Telegram服务器连接断开...")
 		clients.Delete(tc.Self.ID)
 		time.Sleep(time.Millisecond * time.Duration(3))
 		tc.Connect()

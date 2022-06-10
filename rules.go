@@ -55,12 +55,38 @@ func SuffixRule(suffixes ...string) Rule {
 func CommandRule(commands ...string) Rule {
 	return func(ctx *Ctx) bool {
 		msg, ok := ctx.Value.(*tgba.Message)
-		if !ok || msg.Text == "" || !msg.IsCommand() { // 确保无空
+		if !ok || msg.Text == "" { // 确保无空
 			return false
 		}
-		ctx.State["command"] = msg.CommandWithAt()
-		ctx.State["args"] = msg.CommandArguments()
-		return true
+		if msg.IsCommand() {
+			ctx.State["command"] = msg.Command()
+			ctx.State["args"] = msg.CommandArguments()
+			return true
+		}
+		if strings.HasPrefix(msg.Text, "/") {
+			a := strings.Index(msg.Text, "@")
+			b := strings.Index(msg.Text, " ")
+			if b <= 1 {
+				ctx.State["command"] = msg.Text[1:]
+				ctx.State["args"] = ""
+				return true
+			}
+			if b == len(msg.Text) {
+				return false
+			}
+			if a < 0 {
+				ctx.State["command"] = msg.Text[1:b]
+				ctx.State["args"] = msg.Text[b+1:]
+				return true
+			}
+			if a >= b {
+				return false
+			}
+			ctx.State["command"] = msg.Text[1:a]
+			ctx.State["args"] = msg.Text[b+1:]
+			return true
+		}
+		return false
 	}
 }
 
@@ -152,6 +178,9 @@ func OnlyToMe(ctx *Ctx) bool {
 	msg, ok := ctx.Value.(*tgba.Message)
 	if !ok || msg.Text == "" { // 确保无空
 		return false
+	}
+	if msg.Chat.IsPrivate() {
+		return true
 	}
 	name := ctx.Caller.Self.String()
 	if strings.HasPrefix(msg.Text, name) {

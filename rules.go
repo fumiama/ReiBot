@@ -58,33 +58,39 @@ func CommandRule(commands ...string) Rule {
 		if !ok || msg.Text == "" { // 确保无空
 			return false
 		}
-		if msg.IsCommand() {
-			ctx.State["command"] = msg.Command()
-			ctx.State["args"] = msg.CommandArguments()
-			return true
-		}
-		if strings.HasPrefix(msg.Text, "/") {
+		cmdMessage := ""
+		args := ""
+		switch {
+		case msg.IsCommand():
+			cmdMessage = msg.Command()
+			args = msg.CommandArguments()
+		case strings.HasPrefix(msg.Text, "/"):
 			a := strings.Index(msg.Text, "@")
 			b := strings.Index(msg.Text, " ")
-			if b <= 1 {
-				ctx.State["command"] = msg.Text[1:]
-				ctx.State["args"] = ""
+			switch {
+			case b <= 1:
+				cmdMessage = msg.Text[1:]
+				args = ""
+			case b == len(msg.Text):
+				return false
+			case a < 0:
+				cmdMessage = msg.Text[1:b]
+				args = msg.Text[b+1:]
+			case a >= b:
+				return false
+			default:
+				cmdMessage = msg.Text[1:a]
+				args = msg.Text[b+1:]
+			}
+		default:
+			return false
+		}
+		for _, command := range commands {
+			if strings.HasPrefix(cmdMessage, command) {
+				ctx.State["command"] = command
+				ctx.State["args"] = args
 				return true
 			}
-			if b == len(msg.Text) {
-				return false
-			}
-			if a < 0 {
-				ctx.State["command"] = msg.Text[1:b]
-				ctx.State["args"] = msg.Text[b+1:]
-				return true
-			}
-			if a >= b {
-				return false
-			}
-			ctx.State["command"] = msg.Text[1:a]
-			ctx.State["args"] = msg.Text[b+1:]
-			return true
 		}
 		return false
 	}

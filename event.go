@@ -46,6 +46,9 @@ func (tc *TelegramClient) processEvent(update tgba.Update) {
 				State:  State{},
 				Caller: tc,
 			}
+			if tp == "Message" {
+				ctx.Message = (*tgba.Message)(f.UnsafePointer())
+			}
 			match(ctx, matchers)
 			continue
 		}

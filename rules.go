@@ -308,6 +308,14 @@ func AdminPermission(ctx *Ctx) bool {
 	return m.IsCreator() || m.IsAdministrator()
 }
 
+// UserOrGrpAdmin 允许用户单独使用或群管使用
+func UserOrGrpAdmin(ctx *Ctx) bool {
+	if OnlyPublic(ctx) {
+		return AdminPermission(ctx)
+	}
+	return OnlyToMe(ctx)
+}
+
 // IsPhoto 消息是图片返回 true
 func IsPhoto(ctx *Ctx) bool {
 	msg, ok := ctx.Value.(*tgba.Message)

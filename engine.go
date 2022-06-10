@@ -1,7 +1,7 @@
 package rei
 
-// New 生成空引擎
-func NewEngine() *Engine {
+// 生成空引擎
+func newEngine() *Engine {
 	return &Engine{
 		preHandler:  []Rule{},
 		midHandler:  []Rule{},
@@ -9,7 +9,7 @@ func NewEngine() *Engine {
 	}
 }
 
-var defaultEngine = NewEngine()
+var defaultEngine = newEngine()
 
 // Engine is the pre_handler, mid_handler, post_handler manager
 type Engine struct {
@@ -17,6 +17,9 @@ type Engine struct {
 	midHandler  []Rule
 	postHandler []Process
 	matchers    []*Matcher
+	prio        int
+	service     string
+	datafolder  string
 }
 
 // Delete 移除该 Engine 注册的所有 Matchers
@@ -57,6 +60,11 @@ func (e *Engine) UsePostHandler(handler ...Process) {
 func (e *Engine) ApplySingle(s *Single[int64]) *Engine {
 	s.Apply(e)
 	return e
+}
+
+// DataFolder 本插件数据目录, 默认 data/rbp/
+func (e *Engine) DataFolder() string {
+	return e.datafolder
 }
 
 // On 添加新的指定消息类型的匹配器(默认Engine)

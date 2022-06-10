@@ -15,7 +15,7 @@
 This framework is a simple wrapper for [go-telegram-bot-api](https://github.com/go-telegram-bot-api/telegram-bot-api), aiming to make the event processing easier.
 
 ## Quick Start
-> Here is a plugin-based example
+> Here is a plugin-based example, see more in the `example` folder
 
 ![plugin-based example](https://user-images.githubusercontent.com/41315874/171567343-f61eba4e-2bc9-49b3-af05-6446f0a73c54.png)
 
@@ -34,8 +34,7 @@ func main() {
 			if args == "" {
 				return
 			}
-			msg := ctx.Value.(*tgba.Message)
-			ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, args))
+			ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, args))
 		})
 	rei.Run(rei.Bot{
 		Token:  "",

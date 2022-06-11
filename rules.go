@@ -194,25 +194,7 @@ func ShellRule(cmd string, model interface{}) Rule {
 
 // OnlyToMe only triggered in conditions of @bot or begin with the nicknames
 func OnlyToMe(ctx *Ctx) bool {
-	msg, ok := ctx.Value.(*tgba.Message)
-	if !ok || msg.Text == "" { // 确保无空
-		return false
-	}
-	if msg.Chat.IsPrivate() {
-		return true
-	}
-	name := ctx.Caller.Self.String()
-	if strings.HasPrefix(msg.Text, name) {
-		return true
-	}
-	n := 0
-	for _, e := range msg.Entities {
-		if e.IsMention() && e.Length > 0 && msg.Text[n+1:n+e.Length] == name {
-			return true
-		}
-		n += e.Length
-	}
-	return false
+	return ctx.IsToMe
 }
 
 // CheckUser only triggered by specific person

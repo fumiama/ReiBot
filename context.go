@@ -14,6 +14,7 @@ type Ctx struct {
 	Caller  *TelegramClient
 	Message *tgba.Message
 	ma      *Matcher
+	IsToMe  bool
 }
 
 // decoder 反射获取的数据

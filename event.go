@@ -52,7 +52,7 @@ func (tc *TelegramClient) processEvent(update tgba.Update) {
 			case "CallbackQuery":
 				ctx.Message = (*tgba.CallbackQuery)(f.UnsafePointer()).Message
 			}
-			match(ctx, matchers)
+			go match(ctx, matchers)
 			continue
 		}
 		h, ok := tc.b.handlers[tp]

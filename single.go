@@ -28,8 +28,8 @@ func WithPostFn[K comparable](fn func(ctx *Ctx)) Option[K] {
 	}
 }
 
-// New 创建反并发中间件
-func New[K comparable](op ...Option[K]) *Single[K] {
+// NewSingle 创建反并发中间件
+func NewSingle[K comparable](op ...Option[K]) *Single[K] {
 	s := Single[K]{}
 	for _, option := range op {
 		option(&s)

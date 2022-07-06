@@ -2,7 +2,6 @@ package rei
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"unsafe"
@@ -34,11 +33,6 @@ func Lookup(service string) (*ctrl.Control[*Ctx], bool) {
 
 func init() {
 	process.NewCustomOnce(&m).Do(func() {
-		err := os.MkdirAll("data/control", 0755)
-		if err != nil {
-			panic(err)
-		}
-
 		OnMessageCommandGroup([]string{
 			"响应", "response", "沉默", "silence",
 		}, UserOrGrpAdmin).SetBlock(true).secondPriority().Handle(func(ctx *Ctx) {

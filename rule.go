@@ -5,7 +5,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 	"unsafe"
 
 	ctrl "github.com/FloatTech/zbpctrl"
@@ -39,17 +38,6 @@ func init() {
 		if err != nil {
 			panic(err)
 		}
-		err = m.D.Open(time.Hour * 24)
-		if err != nil {
-			panic(err)
-		}
-		err = m.InitBlock()
-		if err != nil {
-			panic(err)
-		}
-		OnMessage(func(ctx *Ctx) bool {
-			return m.IsBlocked(ctx.Message.From.ID)
-		}).SetBlock(true).thirdPriority()
 		OnMessageCommandGroup([]string{
 			"启用", "enable", "禁用", "disable",
 		}, UserOrGrpAdmin).SetBlock(true).secondPriority().Handle(func(ctx *Ctx) {
@@ -136,20 +124,41 @@ func init() {
 					grp = -ctx.Message.From.ID
 				}
 				msg := "**" + args[0] + "报告**"
+				issu := SuperUserPermission(ctx)
 				if strings.Contains(model.Command, "允许") || strings.Contains(model.Command, "permit") {
 					for _, usr := range args[1:] {
 						uid, err := strconv.ParseInt(usr, 10, 64)
 						if err == nil {
-							service.Permit(uid, grp)
-							msg += "\n+ 已允许" + usr
+							if issu {
+								service.Permit(uid, grp)
+								msg += "\n+ 已允许" + usr
+							} else {
+								member, err := ctx.Caller.GetChatMember(tgba.GetChatMemberConfig{ChatConfigWithUser: tgba.ChatConfigWithUser{ChatID: ctx.Message.Chat.ID, UserID: uid}})
+								if err == nil && !member.HasLeft() && !member.WasKicked() {
+									service.Permit(uid, grp)
+									msg += "\n+ 已允许" + usr
+								} else {
+									msg += "\nx " + usr + " 不在本群"
+								}
+							}
 						}
 					}
 				} else {
 					for _, usr := range args[1:] {
 						uid, err := strconv.ParseInt(usr, 10, 64)
 						if err == nil {
-							service.Ban(uid, grp)
-							msg += "\n- 已禁止" + usr
+							if issu {
+								service.Ban(uid, grp)
+								msg += "\n- 已禁止" + usr
+							} else {
+								member, err := ctx.Caller.GetChatMember(tgba.GetChatMemberConfig{ChatConfigWithUser: tgba.ChatConfigWithUser{ChatID: ctx.Message.Chat.ID, UserID: uid}})
+								if err == nil && !member.HasLeft() && !member.WasKicked() {
+									service.Ban(uid, grp)
+									msg += "\n- 已禁止" + usr
+								} else {
+									msg += "\nx " + usr + " 不在本群"
+								}
+							}
 						}
 					}
 				}

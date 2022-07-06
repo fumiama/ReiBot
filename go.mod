@@ -3,8 +3,8 @@ module github.com/fumiama/ReiBot
 go 1.18
 
 require (
-	github.com/FloatTech/zbpctrl v1.4.1-0.20220610074608-425160596f27
-	github.com/FloatTech/zbputils v1.4.1-0.20220611141322-54404ff5dae4
+	github.com/FloatTech/zbpctrl v1.4.1-0.20220705050928-b798cd57bc48
+	github.com/FloatTech/zbputils v1.4.1-0.20220705054031-c98b2e5448f1
 	github.com/RomiChan/syncx v0.0.0-20220404072119-d7ea0ae15a4c
 	github.com/fumiama/go-base16384 v1.5.3
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1

@@ -38,6 +38,37 @@ func init() {
 		if err != nil {
 			panic(err)
 		}
+
+		OnMessageCommandGroup([]string{
+			"响应", "response", "沉默", "silence",
+		}, UserOrGrpAdmin).SetBlock(true).secondPriority().Handle(func(ctx *Ctx) {
+			grp := ctx.Message.Chat.ID
+			if ctx.Message.Chat.IsPrivate() {
+				// 个人用户
+				grp = -ctx.Message.From.ID
+			}
+			msg := ""
+			switch ctx.State["command"] {
+			case "响应", "response":
+				err := m.Response(grp)
+				if err == nil {
+					msg = ctx.Caller.Self.String() + "将开始在此工作啦~"
+				} else {
+					msg = "ERROR: " + err.Error()
+				}
+			case "沉默", "silence":
+				err := m.Silence(grp)
+				if err == nil {
+					msg = ctx.Caller.Self.String() + "将开始休息啦~"
+				} else {
+					msg = "ERROR: " + err.Error()
+				}
+			default:
+				msg = "ERROR: bad command\"" + fmt.Sprint(ctx.State["command"]) + "\""
+			}
+			_, _ = ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, msg))
+		})
+
 		OnMessageCommandGroup([]string{
 			"启用", "enable", "禁用", "disable",
 		}, UserOrGrpAdmin).SetBlock(true).secondPriority().Handle(func(ctx *Ctx) {
@@ -287,7 +318,7 @@ func init() {
 				m.RLock()
 				msg := make([]any, 1, len(m.M)*4+1)
 				m.RUnlock()
-				msg[0] = "--------服务列表--------\n发送\"/用法 name\"查看详情"
+				msg[0] = "--------服务列表--------\n发送\"/用法 name\"查看详情\n发送\"/响应\"启用会话"
 				m.ForEach(func(key string, manager *ctrl.Control[*Ctx]) bool {
 					i++
 					msg = append(msg, "\n", i, ": ", manager.EnableMarkIn(gid), key)

@@ -37,7 +37,7 @@ func (tc *TelegramClient) processEvent(update tgba.Update) {
 				matcherLock.RUnlock()
 				continue
 			}
-			log.Println("pass", tp, "event to plugins")
+			log.Debugln("pass", tp, "event to plugins")
 			matchers := make([]*Matcher, n)
 			copy(matchers, matcherMap[tp])
 			matcherLock.RUnlock()
@@ -53,8 +53,10 @@ func (tc *TelegramClient) processEvent(update tgba.Update) {
 			switch tp {
 			case "Message":
 				ctx.Message = (*tgba.Message)(f.UnsafePointer())
+				log.Println("receive Message Text:", ctx.Message.Text)
 			case "CallbackQuery":
 				ctx.Message = (*tgba.CallbackQuery)(f.UnsafePointer()).Message
+				log.Println("receive CallbackQuery Data:", (*tgba.CallbackQuery)(f.UnsafePointer()).Data)
 			}
 			go match(ctx, matchers)
 			continue

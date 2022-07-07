@@ -7,6 +7,7 @@ import (
 	"time"
 
 	tgba "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/sirupsen/logrus"
 )
 
 // PrefixRule check if the text message has the prefix and trim the prefix
@@ -103,23 +104,30 @@ func RegexRule(regexPattern string) Rule {
 		switch msg := ctx.Value.(type) {
 		case *tgba.Message:
 			if msg.Text == "" { // 确保无空
+				logrus.Debugln("RegexRule: null message text")
 				return false
 			}
 			if matched := regex.FindStringSubmatch(msg.Text); matched != nil {
 				ctx.State["regex_matched"] = matched
+				logrus.Debugln("RegexRule: match message text", matched)
 				return true
 			}
+			logrus.Debugln("RegexRule: no match message")
 			return false
 		case *tgba.CallbackQuery:
 			if msg.Data == "" {
+				logrus.Debugln("RegexRule: null query data")
 				return false
 			}
 			if matched := regex.FindStringSubmatch(msg.Data); matched != nil {
 				ctx.State["regex_matched"] = matched
+				logrus.Debugln("RegexRule: match query data", matched)
 				return true
 			}
+			logrus.Debugln("RegexRule: no match query data")
 			return false
 		default:
+			logrus.Debugln("RegexRule: stub type")
 			return false
 		}
 	}

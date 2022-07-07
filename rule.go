@@ -19,11 +19,7 @@ func newctrl(service string, o *ctrl.Options[*Ctx]) Rule {
 	c := m.NewControl(service, o)
 	return func(ctx *Ctx) bool {
 		ctx.State["manager"] = c
-		var gid int64 = 0
-		if !ctx.Message.Chat.IsPrivate() {
-			gid = ctx.Message.Chat.ID
-		}
-		return c.Handler(uintptr(unsafe.Pointer(ctx)), gid, ctx.value.Elem().FieldByName("From").Elem().FieldByName("ID").Int())
+		return c.Handler(uintptr(unsafe.Pointer(ctx)), ctx.Message.Chat.ID, ctx.value.Elem().FieldByName("From").Elem().FieldByName("ID").Int())
 	}
 }
 
@@ -37,10 +33,6 @@ func init() {
 			"响应", "response", "沉默", "silence",
 		}, UserOrGrpAdmin).SetBlock(true).secondPriority().Handle(func(ctx *Ctx) {
 			grp := ctx.Message.Chat.ID
-			if ctx.Message.Chat.IsPrivate() {
-				// 个人用户
-				grp = -ctx.Message.From.ID
-			}
 			msg := ""
 			switch ctx.State["command"] {
 			case "响应", "response":
@@ -74,10 +66,6 @@ func init() {
 				return
 			}
 			grp := ctx.Message.Chat.ID
-			if ctx.Message.Chat.IsPrivate() {
-				// 个人用户
-				grp = -ctx.Message.From.ID
-			}
 			if strings.Contains(model.Command, "启用") || strings.Contains(model.Command, "enable") {
 				service.Enable(grp)
 				if service.Options.OnEnable != nil {
@@ -123,10 +111,6 @@ func init() {
 				return
 			}
 			grp := ctx.Message.Chat.ID
-			if ctx.Message.Chat.IsPrivate() {
-				// 个人用户
-				grp = -ctx.Message.From.ID
-			}
 			service.Reset(grp)
 			_, _ = ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, "已还原服务的默认启用状态: "+model.Args))
 		})
@@ -144,10 +128,6 @@ func init() {
 					return
 				}
 				grp := ctx.Message.Chat.ID
-				if ctx.Message.Chat.IsPrivate() {
-					// 个人用户
-					grp = -ctx.Message.From.ID
-				}
 				msg := "**" + args[0] + "报告**"
 				issu := SuperUserPermission(ctx)
 				if strings.Contains(model.Command, "允许") || strings.Contains(model.Command, "permit") {
@@ -291,10 +271,6 @@ func init() {
 				}
 				if service.Options.Help != "" {
 					gid := ctx.Message.Chat.ID
-					if ctx.Message.Chat.IsPrivate() {
-						// 个人用户
-						gid = -ctx.Message.From.ID
-					}
 					_, _ = ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, service.EnableMarkIn(gid).String()+" "+service.String()))
 				} else {
 					_, _ = ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, "该服务无帮助!"))
@@ -305,10 +281,6 @@ func init() {
 			Handle(func(ctx *Ctx) {
 				i := 0
 				gid := ctx.Message.Chat.ID
-				if ctx.Message.Chat.IsPrivate() {
-					// 个人用户
-					gid = -ctx.Message.From.ID
-				}
 				m.RLock()
 				msg := make([]any, 1, len(m.M)*4+1)
 				m.RUnlock()
@@ -325,10 +297,6 @@ func init() {
 			Handle(func(ctx *Ctx) {
 				i := 0
 				gid := ctx.Message.Chat.ID
-				if ctx.Message.Chat.IsPrivate() {
-					// 个人用户
-					gid = -ctx.Message.From.ID
-				}
 				m.RLock()
 				msgs := make([]any, 1, len(m.M)*7+1)
 				m.RUnlock()

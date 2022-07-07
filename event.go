@@ -6,7 +6,6 @@ import (
 
 	base14 "github.com/fumiama/go-base16384"
 	tgba "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/wdvxdr1123/ZeroBot/utils/helper"
 )
@@ -78,7 +77,7 @@ func match(ctx *Ctx, matchers []*Matcher) {
 			}
 			name := ctx.Caller.Self.String()
 			if strings.HasPrefix(ctx.Message.Text, name) {
-				logrus.Debugln("[event] message before process:", ctx.Message.Text)
+				log.Debugln("[event] message before process:", ctx.Message.Text)
 				if len(ctx.Message.Entities) > 0 {
 					n := len(name)
 					c := 0
@@ -114,7 +113,7 @@ func match(ctx *Ctx, matchers []*Matcher) {
 					}
 				}
 				ctx.Message.Text = ctx.Message.Text[len(name):]
-				logrus.Debugln("[event] message after process:", ctx.Message.Text)
+				log.Debugln("[event] message after process:", ctx.Message.Text)
 				return true
 			}
 			u16txt, err := base14.UTF82UTF16BE(helper.StringToBytes(ctx.Message.Text))
@@ -131,7 +130,7 @@ func match(ctx *Ctx, matchers []*Matcher) {
 							continue
 						}
 						if helper.BytesToString(n) == name {
-							logrus.Debugln("[event] message before process:", ctx.Message.Text)
+							log.Debugln("[event] message before process:", ctx.Message.Text)
 							n, err = base14.UTF16BE2UTF8(append(u16txt[:2*e.Offset], u16txt[b:]...))
 							if err != nil {
 								continue
@@ -181,7 +180,7 @@ func match(ctx *Ctx, matchers []*Matcher) {
 									}
 								}
 							}
-							logrus.Debugln("[event] message after process:", ctx.Message.Text)
+							log.Debugln("[event] message after process:", ctx.Message.Text)
 							return true
 						}
 					}

@@ -18,6 +18,8 @@ type Event struct {
 	UpdateID int
 	// Value is the non-null field value in Update
 	Value any
+	// value is the reflect value of Value
+	value reflect.Value
 }
 
 func (tc *TelegramClient) processEvent(update tgba.Update) {
@@ -45,6 +47,7 @@ func (tc *TelegramClient) processEvent(update tgba.Update) {
 					Type:     tp,
 					UpdateID: update.UpdateID,
 					Value:    f.Interface(),
+					value:    f,
 				},
 				State:  State{},
 				Caller: tc,

@@ -23,7 +23,7 @@ func newctrl(service string, o *ctrl.Options[*Ctx]) Rule {
 		if !ctx.Message.Chat.IsPrivate() {
 			gid = ctx.Message.Chat.ID
 		}
-		return c.Handler(uintptr(unsafe.Pointer(ctx)), gid, ctx.value.FieldByName("From").FieldByName("ID").Int())
+		return c.Handler(uintptr(unsafe.Pointer(ctx)), gid, ctx.value.Elem().FieldByName("From").FieldByName("ID").Int())
 	}
 }
 

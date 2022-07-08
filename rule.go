@@ -56,6 +56,32 @@ func init() {
 		})
 
 		OnMessageCommandGroup([]string{
+			"全局响应", "allresponse", "全局沉默", "allsilence",
+		}, SuperUserPermission).SetBlock(true).secondPriority().Handle(func(ctx *Ctx) {
+			msg := ""
+			cmd := ctx.State["command"].(string)
+			switch {
+			case strings.Contains(cmd, "响应") || strings.Contains(cmd, "response"):
+				err := m.Response(0)
+				if err == nil {
+					msg = ctx.Caller.Self.String() + "将开始在此工作啦~"
+				} else {
+					msg = "ERROR: " + err.Error()
+				}
+			case strings.Contains(cmd, "沉默") || strings.Contains(cmd, "silence"):
+				err := m.Silence(0)
+				if err == nil {
+					msg = ctx.Caller.Self.String() + "将开始休息啦~"
+				} else {
+					msg = "ERROR: " + err.Error()
+				}
+			default:
+				msg = "ERROR: bad command\"" + cmd + "\""
+			}
+			_, _ = ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, msg))
+		})
+
+		OnMessageCommandGroup([]string{
 			"启用", "enable", "禁用", "disable",
 		}, UserOrGrpAdmin).SetBlock(true).secondPriority().Handle(func(ctx *Ctx) {
 			model := extension.CommandModel{}

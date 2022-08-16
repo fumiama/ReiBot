@@ -6,12 +6,9 @@ import (
 	"strings"
 	"unsafe"
 
+	"github.com/FloatTech/floatbox/process"
 	ctrl "github.com/FloatTech/zbpctrl"
-	"github.com/FloatTech/zbputils/img/text"
-	"github.com/FloatTech/zbputils/img/writer"
-	"github.com/FloatTech/zbputils/process"
 	tgba "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/sirupsen/logrus"
 	"github.com/wdvxdr1123/ZeroBot/extension"
 )
 
@@ -332,20 +329,7 @@ func init() {
 					msgs = append(msgs, i, ": ", service.EnableMarkIn(gid), key, "\n", service, "\n\n")
 					return true
 				})
-				img, err := text.Render(fmt.Sprint(msgs...), text.FontFile, 400, 20)
-				if err != nil {
-					logrus.Errorf("[control] %v", err)
-				}
-				data, cl := writer.ToBytes(img.Image())
-				_, err = ctx.Caller.Send(tgba.NewPhoto(ctx.Message.Chat.ID, tgba.FileBytes{
-					Name:  "服务详情",
-					Bytes: data,
-				}))
-				cl()
-				if err != nil {
-					_, _ = ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, "ERROR: "+err.Error()))
-					return
-				}
+				_, _ = ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, fmt.Sprint(msgs...)))
 			})
 	})
 }

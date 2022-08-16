@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/FloatTech/zbputils/file"
+	"github.com/FloatTech/floatbox/file"
 )
 
 // 下载并获取本 engine 文件夹下的懒加载数据

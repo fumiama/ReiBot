@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"sync/atomic"
-	"time"
 	"unicode"
 
 	"github.com/FloatTech/floatbox/file"
@@ -19,7 +18,7 @@ var (
 	priomap   = make(map[int]string)    // priomap is map[prio]service
 	foldermap = make(map[string]string) // foldermap is map[folder]service
 	prio      uint64
-	m         = ctrl.NewManager[*Ctx]("data/control/plugins.db", 10*time.Second)
+	m         = ctrl.NewManager[*Ctx]("data/control/plugins.db")
 )
 
 // Register 注册插件控制器

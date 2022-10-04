@@ -367,7 +367,7 @@ func IsPhoto(ctx *Ctx) bool {
 }
 
 // MustProvidePhoto 消息不存在图片阻塞120秒至有图片，超时返回 false
-func MustProvidePhoto(ctx *Ctx, needphohint, failhint string) Rule {
+func MustProvidePhoto(needphohint, failhint string) Rule {
 	return func(ctx *Ctx) bool {
 		msg, ok := ctx.Value.(*tgba.Message)
 		if ok && len(msg.Photo) > 0 { // 确保无空

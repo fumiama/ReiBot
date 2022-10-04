@@ -66,25 +66,12 @@ func CommandRule(commands ...string) Rule {
 		cmdMessage := ""
 		args := ""
 		switch {
-		case msg.IsCommand():
+		case ctx.IsToMe && msg.IsCommand():
 			cmdMessage = msg.Command()
 			args = msg.CommandArguments()
 		case strings.HasPrefix(msg.Text, "/"):
-			a := strings.Index(msg.Text, "@")
-			b := strings.Index(msg.Text, " ")
-			if a > 0 && !strings.HasPrefix(msg.Text[a:], "@"+ctx.Caller.Self.String()) {
-				return false
-			}
-			switch {
-			case b <= 1:
-				return false
-			case a < 0 || a >= b:
-				cmdMessage = msg.Text[1:b]
-				args = msg.Text[b+1:]
-			default:
-				cmdMessage = msg.Text[1:a]
-				args = msg.Text[b+1:]
-			}
+			cmdMessage, args, _ = strings.Cut(msg.Text, " ")
+			cmdMessage, _, _ = strings.Cut(cmdMessage, "@")
 		default:
 			return false
 		}

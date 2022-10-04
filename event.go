@@ -84,6 +84,9 @@ func match(ctx *Ctx, matchers []*Matcher) {
 				log.Debugln("[event] message before process:", ctx.Message.Text)
 				if len(ctx.Message.Entities) > 0 {
 					n := len(name)
+					for i := n; ctx.Message.Text[i] == ' '; i++ {
+						n++
+					}
 					c := 0
 					i := 0
 					for _, e := range ctx.Message.Entities {
@@ -116,7 +119,7 @@ func match(ctx *Ctx, matchers []*Matcher) {
 						}
 					}
 				}
-				ctx.Message.Text = ctx.Message.Text[len(name):]
+				ctx.Message.Text = strings.TrimLeft(ctx.Message.Text[len(name):], " ")
 				log.Debugln("[event] message after process:", ctx.Message.Text)
 				return true
 			}
@@ -148,7 +151,7 @@ func match(ctx *Ctx, matchers []*Matcher) {
 							}
 							if ctx.Message.Text[0] == ' ' {
 								n := 0
-								for c := range ctx.Message.Text {
+								for _, c := range ctx.Message.Text {
 									if c == ' ' {
 										n++
 									} else {
@@ -190,9 +193,10 @@ func match(ctx *Ctx, matchers []*Matcher) {
 					}
 				}
 			}
-			return false
+			return strings.Contains(ctx.Message.Text, name)
 		}(ctx)
 	}
+	log.Debugln("[event] is to me:", ctx.IsToMe)
 loop:
 	for _, matcher := range matchers {
 		for k := range ctx.State { // Clear State

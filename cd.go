@@ -17,7 +17,7 @@ var startTime int64
 
 func init() {
 	// 插件冲突检测 会在本群发送一条消息并在约 1s 后撤回
-	OnMessageFullMatch("插件冲突检测", OnlyGroup, AdminPermission, OnlyToMe).SetBlock(true).secondPriority().
+	OnMessageFullMatch("插件冲突检测", OnlyPublic, AdminPermission, OnlyToMe).SetBlock(true).secondPriority().
 		Handle(func(ctx *Ctx) {
 			tok := genToken()
 			if tok == "" || len([]rune(tok)) != 4 {
@@ -33,7 +33,7 @@ func init() {
 			_, _ = ctx.Caller.Send(tgba.NewDeleteMessage(ctx.Message.Chat.ID, msg.MessageID))
 		})
 
-	OnMessageRegex("^●cd([\u4e00-\u8e00]{4})$", OnlyGroup).SetBlock(true).secondPriority().
+	OnMessageRegex("^●cd([\u4e00-\u8e00]{4})$", OnlyPublic).SetBlock(true).secondPriority().
 		Handle(func(ctx *Ctx) {
 			if isValidToken(ctx.State["regex_matched"].([]string)[1]) {
 				gid := ctx.Message.Chat.ID
@@ -63,7 +63,7 @@ func init() {
 			}
 		})
 
-	OnMessageRegex("^●cd●(([\u4e00-\u8e00]*[\u3d01-\u3d06]?))", OnlyGroup).SetBlock(true).secondPriority().
+	OnMessageRegex("^●cd●(([\u4e00-\u8e00]*[\u3d01-\u3d06]?))", OnlyPublic).SetBlock(true).secondPriority().
 		Handle(func(ctx *Ctx) {
 			if time.Now().Unix()-startTime < 10 {
 				gid := ctx.Message.Chat.ID

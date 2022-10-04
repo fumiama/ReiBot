@@ -76,6 +76,7 @@ func match(ctx *Ctx, matchers []*Matcher) {
 	if ctx.Message != nil && ctx.Message.Text != "" { // 确保无空
 		ctx.IsToMe = func(ctx *Ctx) bool {
 			if ctx.Message.Chat.IsPrivate() {
+				log.Debugln("[event] private event")
 				return true
 			}
 			name := ctx.Caller.Self.String()

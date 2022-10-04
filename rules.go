@@ -56,7 +56,7 @@ func SuffixRule(suffixes ...string) Rule {
 func CommandRule(commands ...string) Rule {
 	return func(ctx *Ctx) bool {
 		msg, ok := ctx.Value.(*tgba.Message)
-		if !ok || msg.Text == "" || !ctx.IsToMe { // 确保无空
+		if !ok || msg.Text == "" { // 确保无空
 			return false
 		}
 		msg.Text = strings.TrimSpace(msg.Text)
@@ -72,10 +72,13 @@ func CommandRule(commands ...string) Rule {
 		case strings.HasPrefix(msg.Text, "/"):
 			a := strings.Index(msg.Text, "@")
 			b := strings.Index(msg.Text, " ")
-			switch {
-			case b <= 1 || b == len(msg.Text) || a >= b:
+			if a > 0 && !strings.HasPrefix(msg.Text[a:], "@"+ctx.Caller.Self.String()) {
 				return false
-			case a < 0:
+			}
+			switch {
+			case b <= 1:
+				return false
+			case a < 0 || a >= b:
 				cmdMessage = msg.Text[1:b]
 				args = msg.Text[b+1:]
 			default:

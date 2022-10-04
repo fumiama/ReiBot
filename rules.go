@@ -367,29 +367,31 @@ func IsPhoto(ctx *Ctx) bool {
 }
 
 // MustProvidePhoto 消息不存在图片阻塞120秒至有图片，超时返回 false
-func MustProvidePhoto(ctx *Ctx, needphohint, failhint string) bool {
-	msg, ok := ctx.Value.(*tgba.Message)
-	if ok && len(msg.Photo) > 0 { // 确保无空
-		ctx.State["photos"] = msg.Photo
-		return true
-	}
-	// 没有图片就索取
-	if needphohint != "" {
-		_, err := ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, needphohint))
-		if err != nil {
+func MustProvidePhoto(ctx *Ctx, needphohint, failhint string) Rule {
+	return func(ctx *Ctx) bool {
+		msg, ok := ctx.Value.(*tgba.Message)
+		if ok && len(msg.Photo) > 0 { // 确保无空
+			ctx.State["photos"] = msg.Photo
+			return true
+		}
+		// 没有图片就索取
+		if needphohint != "" {
+			_, err := ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, needphohint))
+			if err != nil {
+				return false
+			}
+		}
+		next := NewFutureEvent("Message", 999, false, ctx.CheckSession(), IsPhoto).Next()
+		select {
+		case <-time.After(time.Second * 120):
+			if failhint != "" {
+				_, _ = ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, failhint))
+			}
 			return false
+		case newCtx := <-next:
+			ctx.State["photos"] = newCtx.State["photos"]
+			ctx.Event = newCtx.Event
+			return true
 		}
-	}
-	next := NewFutureEvent("message", 999, false, ctx.CheckSession(), IsPhoto).Next()
-	select {
-	case <-time.After(time.Second * 120):
-		if failhint != "" {
-			_, _ = ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, failhint))
-		}
-		return false
-	case newCtx := <-next:
-		ctx.State["photos"] = newCtx.State["photos"]
-		ctx.Event = newCtx.Event
-		return true
 	}
 }

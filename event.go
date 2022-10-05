@@ -78,6 +78,7 @@ func match(ctx *Ctx, matchers []*Matcher) {
 		if ctx.Message.Text == "" && ctx.Message.Caption != "" {
 			ctx.Message.Text = ctx.Message.Caption
 			ctx.Message.Entities = ctx.Message.CaptionEntities
+			log.Println("cpoy Message Caption to Text:", ctx.Message.Text)
 		}
 	}
 	if ctx.Message != nil && ctx.Message.Text != "" { // 确保无空

@@ -73,3 +73,78 @@ func (ctx *Ctx) CheckSession() Rule {
 		return msg.From.ID == msg2.From.ID && msg.Chat.ID == msg2.Chat.ID
 	}
 }
+
+// Send 发送消息到对方
+//
+//	c.ChatID = ctx.Message.Chat.ID
+//	if replytosender {
+//		c.ReplyToMessageID = ctx.Message.MessageID
+//	}
+func (ctx *Ctx) Send(replytosender bool, c tgba.Chattable) (tgba.Message, error) {
+	msg := reflect.ValueOf(c).Elem()
+	msg.FieldByName("ChatID").SetInt(ctx.Message.Chat.ID)
+	if replytosender {
+		msg.FieldByName("ReplyToMessageID").SetInt(int64(ctx.Message.MessageID))
+	}
+	return ctx.Caller.Send(c)
+}
+
+// SendPlainMessage 发送无 entities 文本消息到对方
+func (ctx *Ctx) SendPlainMessage(replytosender bool, printable ...any) (tgba.Message, error) {
+	msg := tgba.NewMessage(ctx.Message.Chat.ID, fmt.Sprint(printable...))
+	if replytosender {
+		msg.ReplyToMessageID = ctx.Message.MessageID
+	}
+	return ctx.Caller.Send(&msg)
+}
+
+// SendMessage 发送富文本消息到对方
+func (ctx *Ctx) SendMessage(replytosender bool, text string, entities ...tgba.MessageEntity) (tgba.Message, error) {
+	msg := &tgba.MessageConfig{
+		BaseChat: tgba.BaseChat{
+			ChatID: ctx.Message.Chat.ID,
+		},
+		Text:     text,
+		Entities: entities,
+	}
+	if replytosender {
+		msg.ReplyToMessageID = ctx.Message.MessageID
+	}
+	return ctx.Caller.Send(msg)
+}
+
+// SendPhoto 发送图片消息到对方
+func (ctx *Ctx) SendPhoto(file tgba.RequestFileData, replytosender bool, caption string, captionentities ...tgba.MessageEntity) (tgba.Message, error) {
+	msg := &tgba.PhotoConfig{
+		BaseFile: tgba.BaseFile{
+			BaseChat: tgba.BaseChat{
+				ChatID: ctx.Message.Chat.ID,
+			},
+			File: file,
+		},
+		Caption:         caption,
+		CaptionEntities: captionentities,
+	}
+	if replytosender {
+		msg.ReplyToMessageID = ctx.Message.MessageID
+	}
+	return ctx.Caller.Send(msg)
+}
+
+// SendAudio 发送音频消息到对方
+func (ctx *Ctx) SendAudio(file tgba.RequestFileData, replytosender bool, caption string, captionentities ...tgba.MessageEntity) (tgba.Message, error) {
+	msg := tgba.AudioConfig{
+		BaseFile: tgba.BaseFile{
+			BaseChat: tgba.BaseChat{
+				ChatID: ctx.Message.Chat.ID,
+			},
+			File: file,
+		},
+		Caption:         caption,
+		CaptionEntities: captionentities,
+	}
+	if replytosender {
+		msg.ReplyToMessageID = ctx.Message.MessageID
+	}
+	return ctx.Caller.Send(&msg)
+}

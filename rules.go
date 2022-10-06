@@ -105,9 +105,12 @@ func CommandRule(commands ...string) Rule {
 		case ctx.IsToMe && msg.IsCommand():
 			cmdMessage = msg.Command()
 			args = msg.CommandArguments()
+			logrus.Debugln("CommandRule: IsCommand:", cmdMessage, "args:", args)
 		case strings.HasPrefix(msg.Text, "/"):
 			cmdMessage, args, _ = strings.Cut(msg.Text, " ")
 			cmdMessage, _, _ = strings.Cut(cmdMessage, "@")
+			cmdMessage = cmdMessage[1:]
+			logrus.Debugln("CommandRule: has/prefix:", cmdMessage, "args:", args)
 		default:
 			return false
 		}

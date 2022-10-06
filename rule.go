@@ -71,7 +71,17 @@ func init() {
 								),
 							),
 						},
-						File: tgba.FileID(ctx.Message.Chat.Photo.BigFileID),
+						File: func() tgba.RequestFileData {
+							if ctx.Message.Chat.Photo != nil {
+								return tgba.FileID(ctx.Message.Chat.Photo.BigFileID)
+							}
+							p, err := ctx.Caller.GetUserProfilePhotos(tgba.NewUserProfilePhotos(ctx.Message.From.ID))
+							if err == nil && len(p.Photos) > 0 {
+								fp := p.Photos[0]
+								return tgba.FileID(fp[len(fp)-1].FileID)
+							}
+							return nil
+						}(),
 					},
 					Caption:   "主人, @" + ctx.Message.From.String() + " 请求响应~\n*ChatType*: " + ctx.Message.Chat.Type + "\n*ChatUserName*: " + ctx.Message.Chat.UserName + "\n*ChatID*: " + strconv.FormatInt(ctx.Message.Chat.ID, 10) + "\n*ChatTitle*: " + ctx.Message.Chat.Title + "\n*ChatDescription*: " + ctx.Message.Chat.Description,
 					ParseMode: "Markdown",

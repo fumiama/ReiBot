@@ -26,7 +26,7 @@ func init() {
 			startTime = time.Now().Unix()
 			msg, err := ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, "●cd"+tok))
 			if err != nil {
-				_, _ = ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, "ERROR: "+err.Error()))
+				_, _ = ctx.SendPlainMessage(false, "ERROR: ", err)
 				return
 			}
 			process.SleepAbout1sTo2s()
@@ -54,7 +54,7 @@ func init() {
 					msg, err := ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, binutils.BytesToString(my)))
 					cl()
 					if err != nil {
-						_, _ = ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, "ERROR: "+err.Error()))
+						_, _ = ctx.SendPlainMessage(false, "ERROR: ", err)
 						return
 					}
 					process.SleepAbout1sTo2s()

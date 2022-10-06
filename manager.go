@@ -3,6 +3,7 @@ package rei
 import (
 	"fmt"
 	"os"
+	"sort"
 	"sync/atomic"
 	"unicode"
 
@@ -80,4 +81,26 @@ func Delete(service string) {
 			m.Unlock()
 		}
 	}
+}
+
+// ForEachByPrio iterates through managers by their priority.
+func ForEachByPrio(iterator func(i int, manager *ctrl.Control[*Ctx]) bool) {
+	for i, v := range cpmp2lstbyprio() {
+		if !iterator(i, v) {
+			return
+		}
+	}
+}
+
+func cpmp2lstbyprio() []*ctrl.Control[*Ctx] {
+	m.RLock()
+	defer m.RUnlock()
+	ret := make([]*ctrl.Control[*Ctx], 0, len(m.M))
+	for _, v := range m.M {
+		ret = append(ret, v)
+	}
+	sort.SliceStable(ret, func(i, j int) bool {
+		return enmap[ret[i].Service].prio < enmap[ret[j].Service].prio
+	})
+	return ret
 }

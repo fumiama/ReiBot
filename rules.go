@@ -529,7 +529,7 @@ func MustProvidePhoto(needphohint, failhint string) Rule {
 		select {
 		case <-time.After(time.Second * 120):
 			if failhint != "" {
-				_, _ = ctx.Caller.Send(tgba.NewMessage(msg.Chat.ID, failhint))
+				_, _ = ctx.SendPlainMessage(true, failhint)
 			}
 			return false
 		case newCtx := <-next:

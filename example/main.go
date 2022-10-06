@@ -10,7 +10,7 @@ import (
 func main() {
 	rei.OnMessageFullMatch("help").SetBlock(true).
 		Handle(func(ctx *rei.Ctx) {
-			_, _ = ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, "echo string"))
+			_, _ = ctx.SendPlainMessage(false, "echo string")
 		})
 	rei.Run(rei.Bot{
 		Token:  "",

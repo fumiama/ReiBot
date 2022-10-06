@@ -478,6 +478,11 @@ func (e *Engine) OnCallbackQueryKeywordGroup(keywords []string, rules ...Rule) *
 }
 
 // OnCallbackQueryPrefixGroup 前缀触发器组
+func OnCallbackQueryPrefixGroup(prefix []string, rules ...Rule) *Matcher {
+	return defaultEngine.OnCallbackQueryPrefixGroup(prefix, rules...)
+}
+
+// OnCallbackQueryPrefixGroup 前缀触发器组
 func (e *Engine) OnCallbackQueryPrefixGroup(prefix []string, rules ...Rule) *Matcher {
 	matcher := &Matcher{
 		Type:   "CallbackQuery",

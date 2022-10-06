@@ -15,19 +15,36 @@ import (
 // 检查消息前缀
 func PrefixRule(prefixes ...string) Rule {
 	return func(ctx *Ctx) bool {
-		msg, ok := ctx.Value.(*tgba.Message)
-		if !ok || msg.Text == "" { // 确保无空
+		switch msg := ctx.Value.(type) {
+		case *tgba.Message:
+			if msg.Text == "" { // 确保无空
+				return false
+			}
+			for _, prefix := range prefixes {
+				if strings.HasPrefix(msg.Text, prefix) {
+					ctx.State["prefix"] = prefix
+					arg := strings.TrimLeft(msg.Text[len(prefix):], " ")
+					ctx.State["args"] = arg
+					return true
+				}
+			}
+			return false
+		case *tgba.CallbackQuery:
+			if msg.Data == "" {
+				return false
+			}
+			for _, prefix := range prefixes {
+				if strings.HasPrefix(msg.Data, prefix) {
+					ctx.State["prefix"] = prefix
+					arg := strings.TrimLeft(msg.Data[len(prefix):], " ")
+					ctx.State["args"] = arg
+					return true
+				}
+			}
+			return false
+		default:
 			return false
 		}
-		for _, prefix := range prefixes {
-			if strings.HasPrefix(msg.Text, prefix) {
-				ctx.State["prefix"] = prefix
-				arg := strings.TrimLeft(msg.Text[len(prefix):], " ")
-				ctx.State["args"] = arg
-				return true
-			}
-		}
-		return false
 	}
 }
 
@@ -36,23 +53,42 @@ func PrefixRule(prefixes ...string) Rule {
 // 检查消息后缀
 func SuffixRule(suffixes ...string) Rule {
 	return func(ctx *Ctx) bool {
-		msg, ok := ctx.Value.(*tgba.Message)
-		if !ok || msg.Text == "" { // 确保无空
+		switch msg := ctx.Value.(type) {
+		case *tgba.Message:
+			if msg.Text == "" { // 确保无空
+				return false
+			}
+			for _, suffix := range suffixes {
+				if strings.HasSuffix(msg.Text, suffix) {
+					ctx.State["suffix"] = suffix
+					arg := strings.TrimRight(msg.Text[:len(msg.Text)-len(suffix)], " ")
+					ctx.State["args"] = arg
+					return true
+				}
+			}
+			return false
+		case *tgba.CallbackQuery:
+			if msg.Data == "" {
+				return false
+			}
+			for _, suffix := range suffixes {
+				if strings.HasSuffix(msg.Data, suffix) {
+					ctx.State["suffix"] = suffix
+					arg := strings.TrimRight(msg.Data[:len(msg.Data)-len(suffix)], " ")
+					ctx.State["args"] = arg
+					return true
+				}
+			}
+			return false
+		default:
 			return false
 		}
-		for _, suffix := range suffixes {
-			if strings.HasSuffix(msg.Text, suffix) {
-				ctx.State["suffix"] = suffix
-				arg := strings.TrimRight(msg.Text[:len(msg.Text)-len(suffix)], " ")
-				ctx.State["args"] = arg
-				return true
-			}
-		}
-		return false
 	}
 }
 
 // CommandRule check if the message is a command and trim the command name
+//
+//	this rule only supports tgba.Message
 func CommandRule(commands ...string) Rule {
 	return func(ctx *Ctx) bool {
 		msg, ok := ctx.Value.(*tgba.Message)
@@ -123,6 +159,8 @@ func RegexRule(regexPattern string) Rule {
 }
 
 // ReplyRule check if the message is replying some message
+//
+//	this rule only supports tgba.Message
 func ReplyRule(messageID int) Rule {
 	return func(ctx *Ctx) bool {
 		msg, ok := ctx.Value.(*tgba.Message)
@@ -136,38 +174,70 @@ func ReplyRule(messageID int) Rule {
 // KeywordRule check if the message has a keyword or keywords
 func KeywordRule(src ...string) Rule {
 	return func(ctx *Ctx) bool {
-		msg, ok := ctx.Value.(*tgba.Message)
-		if !ok || msg.Text == "" { // 确保无空
+		switch msg := ctx.Value.(type) {
+		case *tgba.Message:
+			if msg.Text == "" { // 确保无空
+				return false
+			}
+			for _, str := range src {
+				if strings.Contains(msg.Text, str) {
+					ctx.State["keyword"] = str
+					return true
+				}
+			}
+			return false
+		case *tgba.CallbackQuery:
+			if msg.Data == "" {
+				return false
+			}
+			for _, str := range src {
+				if strings.Contains(msg.Data, str) {
+					ctx.State["keyword"] = str
+					return true
+				}
+			}
+			return false
+		default:
 			return false
 		}
-		for _, str := range src {
-			if strings.Contains(msg.Text, str) {
-				ctx.State["keyword"] = str
-				return true
-			}
-		}
-		return false
 	}
 }
 
 // FullMatchRule check if src has the same copy of the message
 func FullMatchRule(src ...string) Rule {
 	return func(ctx *Ctx) bool {
-		msg, ok := ctx.Value.(*tgba.Message)
-		if !ok || msg.Text == "" { // 确保无空
+		switch msg := ctx.Value.(type) {
+		case *tgba.Message:
+			if msg.Text == "" { // 确保无空
+				return false
+			}
+			for _, str := range src {
+				if str == msg.Text {
+					ctx.State["matched"] = msg.Text
+					return true
+				}
+			}
+			return false
+		case *tgba.CallbackQuery:
+			if msg.Data == "" {
+				return false
+			}
+			for _, str := range src {
+				if str == msg.Data {
+					ctx.State["matched"] = msg.Data
+					return true
+				}
+			}
+			return false
+		default:
 			return false
 		}
-		for _, str := range src {
-			if str == msg.Text {
-				ctx.State["matched"] = msg.Text
-				return true
-			}
-		}
-		return false
 	}
 }
 
 // ShellRule 定义shell-like规则
+//
+//	this rule only supports tgba.Message
 func ShellRule(cmd string, model interface{}) Rule {
 	cmdRule := CommandRule(cmd)
 	t := reflect.TypeOf(model)
@@ -190,6 +260,8 @@ func ShellRule(cmd string, model interface{}) Rule {
 }
 
 // OnlyToMe only triggered in conditions of @bot or begin with the nicknames
+//
+//	this rule only supports tgba.Message
 func OnlyToMe(ctx *Ctx) bool {
 	return ctx.IsToMe
 }
@@ -197,32 +269,60 @@ func OnlyToMe(ctx *Ctx) bool {
 // CheckUser only triggered by specific person
 func CheckUser(userId ...int64) Rule {
 	return func(ctx *Ctx) bool {
-		msg, ok := ctx.Value.(*tgba.Message)
-		if !ok || msg.From == nil { // 确保无空
+		switch msg := ctx.Value.(type) {
+		case *tgba.Message:
+			if msg.From == nil { // 确保无空
+				return false
+			}
+			for _, uid := range userId {
+				if msg.From.ID == uid {
+					return true
+				}
+			}
+			return false
+		case *tgba.CallbackQuery:
+			if msg.From == nil {
+				return false
+			}
+			for _, uid := range userId {
+				if msg.From.ID == uid {
+					return true
+				}
+			}
+			return false
+		default:
 			return false
 		}
-		for _, uid := range userId {
-			if msg.From.ID == uid {
-				return true
-			}
-		}
-		return false
 	}
 }
 
 // CheckChat only triggered in specific chat
 func CheckChat(chatId ...int64) Rule {
 	return func(ctx *Ctx) bool {
-		msg, ok := ctx.Value.(*tgba.Message)
-		if !ok || msg.Chat == nil { // 确保无空
+		switch msg := ctx.Value.(type) {
+		case *tgba.Message:
+			if msg.Chat == nil { // 确保无空
+				return false
+			}
+			for _, cid := range chatId {
+				if msg.Chat.ID == cid {
+					return true
+				}
+			}
+			return false
+		case *tgba.CallbackQuery:
+			if msg.Message == nil || msg.Message.Chat == nil {
+				return false
+			}
+			for _, cid := range chatId {
+				if msg.Message.Chat.ID == cid {
+					return true
+				}
+			}
+			return false
+		default:
 			return false
 		}
-		for _, cid := range chatId {
-			if msg.Chat.ID == cid {
-				return true
-			}
-		}
-		return false
 	}
 }
 
@@ -273,66 +373,116 @@ func OnlyChannel(ctx *Ctx) bool {
 
 // SuperUserPermission only triggered by the bot's owner
 func SuperUserPermission(ctx *Ctx) bool {
-	msg, ok := ctx.Value.(*tgba.Message)
-	if !ok || msg.From == nil { // 确保无空
+	switch msg := ctx.Value.(type) {
+	case *tgba.Message:
+		if msg.From == nil { // 确保无空
+			return false
+		}
+		for _, su := range ctx.Caller.b.SuperUsers {
+			if su == msg.From.ID {
+				return true
+			}
+		}
+		return false
+	case *tgba.CallbackQuery:
+		if msg.From == nil {
+			return false
+		}
+		for _, su := range ctx.Caller.b.SuperUsers {
+			if su == msg.From.ID {
+				return true
+			}
+		}
+		return false
+	default:
 		return false
 	}
-	for _, su := range ctx.Caller.b.SuperUsers {
-		if su == msg.From.ID {
-			return true
-		}
-	}
-	return false
 }
 
 // CreaterPermission only triggered by the group creater or higher permission
 func CreaterPermission(ctx *Ctx) bool {
-	msg, ok := ctx.Value.(*tgba.Message)
-	if !ok || msg.From == nil || msg.Chat == nil { // 确保无空
-		return false
+	if SuperUserPermission(ctx) {
+		return true
 	}
-	for _, su := range ctx.Caller.b.SuperUsers {
-		if su == msg.From.ID {
-			return true
+	switch msg := ctx.Value.(type) {
+	case *tgba.Message:
+		if msg.From == nil || msg.Chat == nil { // 确保无空
+			return false
 		}
-	}
-	m, err := ctx.Caller.GetChatMember(
-		tgba.GetChatMemberConfig{
-			ChatConfigWithUser: tgba.ChatConfigWithUser{
-				ChatID: msg.Chat.ID,
-				UserID: msg.From.ID,
+		m, err := ctx.Caller.GetChatMember(
+			tgba.GetChatMemberConfig{
+				ChatConfigWithUser: tgba.ChatConfigWithUser{
+					ChatID: msg.Chat.ID,
+					UserID: msg.From.ID,
+				},
 			},
-		},
-	)
-	if err != nil {
+		)
+		if err != nil {
+			return false
+		}
+		return m.IsCreator()
+	case *tgba.CallbackQuery:
+		if msg.From == nil || msg.Message == nil || msg.Message.Chat == nil {
+			return false
+		}
+		m, err := ctx.Caller.GetChatMember(
+			tgba.GetChatMemberConfig{
+				ChatConfigWithUser: tgba.ChatConfigWithUser{
+					ChatID: msg.Message.Chat.ID,
+					UserID: msg.From.ID,
+				},
+			},
+		)
+		if err != nil {
+			return false
+		}
+		return m.IsCreator()
+	default:
 		return false
 	}
-	return m.IsCreator()
 }
 
 // AdminPermission only triggered by the group admins or higher permission
 func AdminPermission(ctx *Ctx) bool {
-	msg, ok := ctx.Value.(*tgba.Message)
-	if !ok || msg.From == nil || msg.Chat == nil { // 确保无空
-		return false
+	if SuperUserPermission(ctx) {
+		return true
 	}
-	for _, su := range ctx.Caller.b.SuperUsers {
-		if su == msg.From.ID {
-			return true
+	switch msg := ctx.Value.(type) {
+	case *tgba.Message:
+		if msg.From == nil || msg.Chat == nil { // 确保无空
+			return false
 		}
-	}
-	m, err := ctx.Caller.GetChatMember(
-		tgba.GetChatMemberConfig{
-			ChatConfigWithUser: tgba.ChatConfigWithUser{
-				ChatID: msg.Chat.ID,
-				UserID: msg.From.ID,
+		m, err := ctx.Caller.GetChatMember(
+			tgba.GetChatMemberConfig{
+				ChatConfigWithUser: tgba.ChatConfigWithUser{
+					ChatID: msg.Chat.ID,
+					UserID: msg.From.ID,
+				},
 			},
-		},
-	)
-	if err != nil {
+		)
+		if err != nil {
+			return false
+		}
+		return m.IsCreator() || m.IsAdministrator()
+	case *tgba.CallbackQuery:
+		if msg.From == nil || msg.Message == nil || msg.Message.Chat == nil {
+			return false
+		}
+		m, err := ctx.Caller.GetChatMember(
+			tgba.GetChatMemberConfig{
+				ChatConfigWithUser: tgba.ChatConfigWithUser{
+					ChatID: msg.Message.Chat.ID,
+					UserID: msg.From.ID,
+				},
+			},
+		)
+		if err != nil {
+			return false
+		}
+		return m.IsCreator() || m.IsAdministrator()
+	default:
 		return false
 	}
-	return m.IsCreator() || m.IsAdministrator()
 }
 
 // UserOrGrpAdmin 允许用户单独使用或群管使用
@@ -344,6 +494,8 @@ func UserOrGrpAdmin(ctx *Ctx) bool {
 }
 
 // IsPhoto 消息是图片返回 true
+//
+//	this rule only supports tgba.Message
 func IsPhoto(ctx *Ctx) bool {
 	msg, ok := ctx.Value.(*tgba.Message)
 	if !ok || len(msg.Photo) == 0 { // 确保无空
@@ -354,6 +506,8 @@ func IsPhoto(ctx *Ctx) bool {
 }
 
 // MustProvidePhoto 消息不存在图片阻塞120秒至有图片，超时返回 false
+//
+//	this rule only supports tgba.Message
 func MustProvidePhoto(needphohint, failhint string) Rule {
 	return func(ctx *Ctx) bool {
 		msg, ok := ctx.Value.(*tgba.Message)

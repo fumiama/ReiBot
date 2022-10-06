@@ -242,7 +242,7 @@ func OnMessageKeyword(keyword string, rules ...Rule) *Matcher {
 	return defaultEngine.OnMessageKeyword(keyword, rules...)
 }
 
-// OnKeyword 关键词触发器
+// OnMessageKeyword 关键词触发器
 func (e *Engine) OnMessageKeyword(keyword string, rules ...Rule) *Matcher {
 	matcher := &Matcher{
 		Type:   "Message",
@@ -365,11 +365,139 @@ func (e *Engine) OnMessageShell(command string, model interface{}, rules ...Rule
 	return StoreMatcher(matcher)
 }
 
+// OnCallbackQueryPrefix 前缀触发器
+func OnCallbackQueryPrefix(prefix string, rules ...Rule) *Matcher {
+	return defaultEngine.OnCallbackQueryPrefix(prefix, rules...)
+}
+
+// OnCallbackQueryPrefix 前缀触发器
+func (e *Engine) OnCallbackQueryPrefix(prefix string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "CallbackQuery",
+		Rules:  append([]Rule{PrefixRule(prefix)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnCallbackQuerySuffix 后缀触发器
+func OnCallbackQuerySuffix(suffix string, rules ...Rule) *Matcher {
+	return defaultEngine.OnCallbackQuerySuffix(suffix, rules...)
+}
+
+// OnCallbackQuerySuffix 后缀触发器
+func (e *Engine) OnCallbackQuerySuffix(suffix string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "CallbackQuery",
+		Rules:  append([]Rule{SuffixRule(suffix)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnCallbackQueryRegex 正则触发器
+func OnCallbackQueryRegex(regexPattern string, rules ...Rule) *Matcher {
+	return defaultEngine.OnCallbackQueryRegex(regexPattern, rules...)
+}
+
 // OnCallbackQueryRegex 正则触发器
 func (e *Engine) OnCallbackQueryRegex(regexPattern string, rules ...Rule) *Matcher {
 	matcher := &Matcher{
 		Type:   "CallbackQuery",
 		Rules:  append([]Rule{RegexRule(regexPattern)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnCallbackQueryKeyword 关键词触发器
+func OnCallbackQueryKeyword(keyword string, rules ...Rule) *Matcher {
+	return defaultEngine.OnCallbackQueryKeyword(keyword, rules...)
+}
+
+// OnCallbackQueryKeyword 关键词触发器
+func (e *Engine) OnCallbackQueryKeyword(keyword string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "CallbackQuery",
+		Rules:  append([]Rule{KeywordRule(keyword)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnCallbackQueryFullMatch 完全匹配触发器
+func OnCallbackQueryFullMatch(src string, rules ...Rule) *Matcher {
+	return defaultEngine.OnCallbackQueryFullMatch(src, rules...)
+}
+
+// OnCallbackQueryFullMatch 完全匹配触发器
+func (e *Engine) OnCallbackQueryFullMatch(src string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "CallbackQuery",
+		Rules:  append([]Rule{FullMatchRule(src)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnCallbackQueryFullMatchGroup 完全匹配触发器组
+func OnCallbackQueryFullMatchGroup(src []string, rules ...Rule) *Matcher {
+	return defaultEngine.OnCallbackQueryFullMatchGroup(src, rules...)
+}
+
+// OnCallbackQueryFullMatchGroup 完全匹配触发器组
+func (e *Engine) OnCallbackQueryFullMatchGroup(src []string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "CallbackQuery",
+		Rules:  append([]Rule{FullMatchRule(src...)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnCallbackQueryKeywordGroup 关键词触发器组
+func OnCallbackQueryKeywordGroup(keywords []string, rules ...Rule) *Matcher {
+	return defaultEngine.OnCallbackQueryKeywordGroup(keywords, rules...)
+}
+
+// OnCallbackQueryKeywordGroup 关键词触发器组
+func (e *Engine) OnCallbackQueryKeywordGroup(keywords []string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "CallbackQuery",
+		Rules:  append([]Rule{KeywordRule(keywords...)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnCallbackQueryPrefixGroup 前缀触发器组
+func (e *Engine) OnCallbackQueryPrefixGroup(prefix []string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "CallbackQuery",
+		Rules:  append([]Rule{PrefixRule(prefix...)}, rules...),
+		Engine: e,
+	}
+	e.matchers = append(e.matchers, matcher)
+	return StoreMatcher(matcher)
+}
+
+// OnCallbackQuerySuffixGroup 后缀触发器组
+func OnCallbackQuerySuffixGroup(suffix []string, rules ...Rule) *Matcher {
+	return defaultEngine.OnCallbackQuerySuffixGroup(suffix, rules...)
+}
+
+// OnCallbackQuerySuffixGroup 后缀触发器组
+func (e *Engine) OnCallbackQuerySuffixGroup(suffix []string, rules ...Rule) *Matcher {
+	matcher := &Matcher{
+		Type:   "CallbackQuery",
+		Rules:  append([]Rule{SuffixRule(suffix...)}, rules...),
 		Engine: e,
 	}
 	e.matchers = append(e.matchers, matcher)

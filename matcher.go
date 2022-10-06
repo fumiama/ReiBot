@@ -65,23 +65,28 @@ func (m *Matcher) setPriority(priority int) *Matcher {
 	return m
 }
 
+/*
 // firstPriority 设置当前 Matcher 优先级 - 0
 func (m *Matcher) firstPriority() *Matcher {
 	return m.setPriority(0)
 }
+*/
 
 // secondPriority 设置当前 Matcher 优先级 - 1
 func (m *Matcher) secondPriority() *Matcher {
 	return m.setPriority(1)
 }
 
+/*
 // thirdPriority 设置当前 Matcher 优先级 - 2
 func (m *Matcher) thirdPriority() *Matcher {
 	return m.setPriority(2)
 }
+*/
 
 // Limit 限速器
-//    postfn 当请求被拒绝时的操作
+//
+//	postfn 当请求被拒绝时的操作
 func (m *Matcher) Limit(limiterfn func(*Ctx) *rate.Limiter, postfn ...func(*Ctx)) *Matcher {
 	m.Rules = append(m.Rules, func(ctx *Ctx) bool {
 		if limiterfn(ctx).Acquire() {

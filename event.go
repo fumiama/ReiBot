@@ -73,7 +73,7 @@ func (tc *TelegramClient) processEvent(update tgba.Update) {
 }
 
 func match(ctx *Ctx, matchers []*Matcher) {
-	if ctx.Message != nil {
+	if ctx.Message != nil && ctx.Event.Type == "Message" {
 		// Caption也当作消息处理
 		if ctx.Message.Text == "" && ctx.Message.Caption != "" {
 			ctx.Message.Text = ctx.Message.Caption
@@ -81,7 +81,7 @@ func match(ctx *Ctx, matchers []*Matcher) {
 			log.Println("cpoy Message Caption to Text:", ctx.Message.Text)
 		}
 	}
-	if ctx.Message != nil && ctx.Message.Text != "" { // 确保无空
+	if ctx.Message != nil && ctx.Event.Type == "Message" && ctx.Message.Text != "" { // 确保无空
 		ctx.IsToMe = func(ctx *Ctx) bool {
 			if ctx.Message.Chat.IsPrivate() {
 				log.Debugln("[event] private event")

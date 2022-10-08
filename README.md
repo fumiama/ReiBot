@@ -34,7 +34,7 @@ func main() {
 			if args == "" {
 				return
 			}
-			ctx.Caller.Send(tgba.NewMessage(ctx.Message.Chat.ID, args))
+			ctx.SendPlainMessage(false, args)
 		})
 	rei.Run(rei.Bot{
 		Token:  "",

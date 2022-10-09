@@ -28,8 +28,8 @@ func Lookup(service string) (*ctrl.Control[*Ctx], bool) {
 
 // respLimiterManager 请求响应限速器管理
 //
-//	每 1d 1次触发
-var respLimiterManager = rate.NewManager[int64](time.Hour*24, 1)
+//	每 1d 4次触发
+var respLimiterManager = rate.NewManager[int64](time.Hour*24, 4)
 
 func init() {
 	process.NewCustomOnce(&m).Do(func() {
@@ -101,6 +101,30 @@ func init() {
 					msg = ctx.Caller.Self.String() + "将开始休息啦~"
 				} else {
 					msg = "ERROR: " + err.Error()
+				}
+				if SuperUserPermission(ctx) {
+					break
+				}
+				notify := &tgba.PhotoConfig{
+					BaseFile: tgba.BaseFile{
+						File: func() tgba.RequestFileData {
+							if ctx.Message.Chat.Photo != nil {
+								return tgba.FileID(ctx.Message.Chat.Photo.BigFileID)
+							}
+							p, err := ctx.Caller.GetUserProfilePhotos(tgba.NewUserProfilePhotos(ctx.Message.From.ID))
+							if err == nil && len(p.Photos) > 0 {
+								fp := p.Photos[0]
+								return tgba.FileID(fp[len(fp)-1].FileID)
+							}
+							return nil
+						}(),
+					},
+					Caption:   "主人, @" + ctx.Message.From.String() + " 主动结束了响应~\n*ChatType*: " + ctx.Message.Chat.Type + "\n*ChatUserName*: " + ctx.Message.Chat.UserName + "\n*ChatID*: " + strconv.FormatInt(ctx.Message.Chat.ID, 10) + "\n*ChatTitle*: " + ctx.Message.Chat.Title + "\n*ChatDescription*: " + ctx.Message.Chat.Description,
+					ParseMode: "Markdown",
+				}
+				for _, id := range ctx.Caller.b.SuperUsers {
+					notify.ChatID = id
+					_, _ = ctx.Caller.Send(notify)
 				}
 			default:
 				msg = "ERROR: bad command\"" + fmt.Sprint(ctx.State["command"]) + "\""

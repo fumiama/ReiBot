@@ -12,6 +12,8 @@
 
 ## Instructions
 
+> Note: This framework is built mainly for Chinese users thus may display hard-coded Chinese prompts during the interaction.
+
 This framework is a simple wrapper for [go-telegram-bot-api](https://github.com/go-telegram-bot-api/telegram-bot-api), aiming to make the event processing easier.
 
 ## Quick Start

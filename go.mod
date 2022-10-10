@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/FloatTech/floatbox v0.0.0-20221010154018-16998fe73c7b
-	github.com/FloatTech/zbpctrl v1.5.2-0.20221010032757-ed784af72c91
+	github.com/FloatTech/zbpctrl v1.5.2-0.20221010161826-e1908f4328ba
 	github.com/RomiChan/syncx v0.0.0-20220404072119-d7ea0ae15a4c
 	github.com/fumiama/go-base16384 v1.5.4
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1

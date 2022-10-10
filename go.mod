@@ -3,18 +3,18 @@ module github.com/fumiama/ReiBot
 go 1.18
 
 require (
-	github.com/FloatTech/floatbox v0.0.0-20221003150509-1eb268ad10ff
-	github.com/FloatTech/zbpctrl v1.5.2-0.20220921013146-40d64bc7799c
+	github.com/FloatTech/floatbox v0.0.0-20221010032535-3acc1e46c8a9
+	github.com/FloatTech/zbpctrl v1.5.2-0.20221010032757-ed784af72c91
 	github.com/RomiChan/syncx v0.0.0-20220404072119-d7ea0ae15a4c
 	github.com/fumiama/go-base16384 v1.5.4
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.0
-	github.com/wdvxdr1123/ZeroBot v1.5.2-0.20220917061201-be873b3fa0fb
+	github.com/wdvxdr1123/ZeroBot v1.5.2-0.20221010014449-b4fd5aee6033
 )
 
 require (
-	github.com/FloatTech/sqlite v0.4.0 // indirect
+	github.com/FloatTech/sqlite v0.5.0 // indirect
 	github.com/FloatTech/ttl v0.0.0-20220715042055-15612be72f5b // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fumiama/cron v1.3.0 // indirect

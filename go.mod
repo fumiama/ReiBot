@@ -3,14 +3,14 @@ module github.com/fumiama/ReiBot
 go 1.18
 
 require (
-	github.com/FloatTech/floatbox v0.0.0-20221010032535-3acc1e46c8a9
+	github.com/FloatTech/floatbox v0.0.0-20221010154018-16998fe73c7b
 	github.com/FloatTech/zbpctrl v1.5.2-0.20221010032757-ed784af72c91
 	github.com/RomiChan/syncx v0.0.0-20220404072119-d7ea0ae15a4c
 	github.com/fumiama/go-base16384 v1.5.4
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.0
-	github.com/wdvxdr1123/ZeroBot v1.5.2-0.20221010014449-b4fd5aee6033
+	github.com/wdvxdr1123/ZeroBot v1.5.2-0.20221010153647-ef3e42aff1ff
 )
 
 require (

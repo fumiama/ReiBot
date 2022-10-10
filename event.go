@@ -219,6 +219,9 @@ loop:
 		if m.Engine != nil {
 			for _, handler := range m.Engine.preHandler {
 				if !handler(ctx) { // 有 pre handler 未满足
+					if m.Block { // 阻断后续
+						break loop
+					}
 					continue loop
 				}
 			}
@@ -226,6 +229,9 @@ loop:
 
 		for _, rule := range m.Rules {
 			if rule != nil && !rule(ctx) { // 有 Rule 的条件未满足
+				if m.Block { // 阻断后续
+					break loop
+				}
 				continue loop
 			}
 		}
@@ -234,6 +240,9 @@ loop:
 		if m.Engine != nil {
 			for _, handler := range m.Engine.midHandler {
 				if !handler(ctx) { // 有 mid handler 未满足
+					if m.Block { // 阻断后续
+						break loop
+					}
 					continue loop
 				}
 			}

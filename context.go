@@ -148,3 +148,13 @@ func (ctx *Ctx) SendAudio(file tgba.RequestFileData, replytosender bool, caption
 	}
 	return ctx.Caller.Send(&msg)
 }
+
+// Block 匹配成功后阻止后续触发
+func (ctx *Ctx) Block() {
+	ctx.ma.SetBlock(true)
+}
+
+// Block 在 pre, rules, mid 阶段阻止后续触发
+func (ctx *Ctx) Break() {
+	ctx.ma.Break = true
+}

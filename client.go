@@ -41,7 +41,7 @@ func NewTelegramClient(c *Bot) (tc TelegramClient) {
 				continue
 			}
 			tp := t.Field(i).Name[2:]
-			log.Println("register handler", tp)
+			log.Println("注册处理函数", tp)
 			handler := f.Interface()
 			tc.b.handlers[tp] = *(*GeneralHandleType)(unsafe.Add(unsafe.Pointer(&handler), unsafe.Sizeof(uintptr(0))))
 		}

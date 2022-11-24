@@ -55,10 +55,17 @@ func (tc *TelegramClient) processEvent(update tgba.Update) {
 			switch tp {
 			case "Message":
 				ctx.Message = (*tgba.Message)(f.UnsafePointer())
-				log.Println("receive Message Text:", ctx.Message.Text)
+				if ctx.Message.From == nil {
+					ctx.Message.From = &tgba.User{}
+				}
+				log.Println("receive Message Text from", ctx.Message.From.ID, ":", ctx.Message.Text)
 			case "CallbackQuery":
-				ctx.Message = (*tgba.CallbackQuery)(f.UnsafePointer()).Message
-				log.Println("receive CallbackQuery Data:", (*tgba.CallbackQuery)(f.UnsafePointer()).Data)
+				c := (*tgba.CallbackQuery)(f.UnsafePointer())
+				ctx.Message = c.Message
+				if c.From == nil {
+					c.From = &tgba.User{}
+				}
+				log.Println("receive CallbackQuery Data from", c.From.ID, ":", c.Data)
 			}
 			go match(ctx, matchers)
 			continue
@@ -67,7 +74,7 @@ func (tc *TelegramClient) processEvent(update tgba.Update) {
 		if !ok {
 			continue
 		}
-		log.Println("process", tp, "event")
+		log.Debugln("process", tp, "event")
 		go h(update.UpdateID, tc, f.UnsafePointer())
 	}
 }

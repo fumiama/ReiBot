@@ -6,7 +6,7 @@
   <h1>ReiBot</h1>
   Lightweight Telegram bot framework<br><br>
 
-  <img src="http://cmoe.azurewebsites.net/cmoe?name=ReiBot&theme=r34" /><br>
+  <img src="https://counter.seku.su/cmoe?name=ReiBot&theme=r34" /><br>
 
 </div>
 

@@ -19,7 +19,7 @@ func main() {
 		},
 		Debug: true,
 		Handler: &rei.Handler{
-			OnMessage: func(updateid int, bot *rei.TelegramClient, msg *tgba.Message) {
+			OnMessage: func(_ int, bot *rei.TelegramClient, msg *tgba.Message) {
 				if len(msg.Text) <= len("测试") {
 					return
 				}
@@ -31,7 +31,7 @@ func main() {
 					log.Errorln(err)
 				}
 			},
-			OnEditedMessage: func(updateid int, bot *rei.TelegramClient, msg *tgba.Message) {
+			OnEditedMessage: func(_ int, bot *rei.TelegramClient, msg *tgba.Message) {
 				if len(msg.Text) <= len("测试") {
 					return
 				}

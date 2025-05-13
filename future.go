@@ -9,19 +9,19 @@ type FutureEvent struct {
 }
 
 // NewFutureEvent 创建一个FutureEvent, 并返回其指针
-func NewFutureEvent(typ string, Priority int, Block bool, rule ...Rule) *FutureEvent {
+func NewFutureEvent(typ string, prio int, Block bool, rule ...Rule) *FutureEvent {
 	return &FutureEvent{
 		Type:     typ,
-		Priority: Priority,
+		Priority: prio,
 		Rule:     rule,
 		Block:    Block,
 	}
 }
 
 // FutureEvent 返回一个 FutureEvent 实例指针，用于获取满足 Rule 的 未来事件
-func (m *Matcher) FutureEvent(Type string, rule ...Rule) *FutureEvent {
+func (m *Matcher) FutureEvent(typ string, rule ...Rule) *FutureEvent {
 	return &FutureEvent{
-		Type:     Type,
+		Type:     typ,
 		Priority: m.priority,
 		Block:    m.Block,
 		Rule:     rule,

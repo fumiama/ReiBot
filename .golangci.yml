@@ -6,10 +6,6 @@ linters-settings:
   goimports:
     local-prefixes: github.com/fumiama/ReiBot
 
-  gocritic:
-    disabled-checks:
-      - exitAfterDefer
-
 linters:
   # please, do not use `enable-all`: it's deprecated and will be removed soon.
   # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
@@ -17,42 +13,38 @@ linters:
   fast: false
   enable:
     - bodyclose
-    - deadcode
-    - depguard
+    #- depguard
     - dogsled
-    - dupl
     - errcheck
-    - exportloopref
+    #- exportloopref
     - exhaustive
     #- funlen
     #- goconst
-    #- gocritic
+    - gocritic
     #- gocyclo
-    - gofumpt
+    - gofmt
     - goimports
     - goprintffuncname
     #- gosec
     - gosimple
     - govet
     - ineffassign
-    - misspell
+    #- misspell
     - nolintlint
     - rowserrcheck
     - staticcheck
-    - structcheck
-    #- stylecheck
+    - stylecheck
     - typecheck
     - unconvert
     - unparam
     - unused
-    - varcheck
     - whitespace
     - prealloc
     - predeclared
     - asciicheck
-    #- revive
+    - revive
+    - forbidigo
     - makezero
-    - interfacer
 
 
 run:
@@ -61,10 +53,12 @@ run:
   deadline: 5m
   issues-exit-code: 1
   tests: false
+  go: '1.20'
 
 # output configuration options
 output:
-  format: 'colored-line-number'
+  formats:
+   - format: "colored-line-number"
   print-issued-lines: true
   print-linter-name: true
   uniq-by-line: true

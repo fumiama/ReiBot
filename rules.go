@@ -270,14 +270,14 @@ func OnlyToMe(ctx *Ctx) bool {
 }
 
 // CheckUser only triggered by specific person
-func CheckUser(userId ...int64) Rule {
+func CheckUser(userID ...int64) Rule {
 	return func(ctx *Ctx) bool {
 		switch msg := ctx.Value.(type) {
 		case *tgba.Message:
 			if msg.From == nil { // 确保无空
 				return false
 			}
-			for _, uid := range userId {
+			for _, uid := range userID {
 				if msg.From.ID == uid {
 					return true
 				}
@@ -287,7 +287,7 @@ func CheckUser(userId ...int64) Rule {
 			if msg.From == nil {
 				return false
 			}
-			for _, uid := range userId {
+			for _, uid := range userID {
 				if msg.From.ID == uid {
 					return true
 				}
@@ -300,14 +300,14 @@ func CheckUser(userId ...int64) Rule {
 }
 
 // CheckChat only triggered in specific chat
-func CheckChat(chatId ...int64) Rule {
+func CheckChat(chatID ...int64) Rule {
 	return func(ctx *Ctx) bool {
 		switch msg := ctx.Value.(type) {
 		case *tgba.Message:
 			if msg.Chat == nil { // 确保无空
 				return false
 			}
-			for _, cid := range chatId {
+			for _, cid := range chatID {
 				if msg.Chat.ID == cid {
 					return true
 				}
@@ -317,7 +317,7 @@ func CheckChat(chatId ...int64) Rule {
 			if msg.Message == nil || msg.Message.Chat == nil {
 				return false
 			}
-			for _, cid := range chatId {
+			for _, cid := range chatID {
 				if msg.Message.Chat.ID == cid {
 					return true
 				}

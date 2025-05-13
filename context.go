@@ -66,7 +66,7 @@ func (ctx *Ctx) Parse(model interface{}) (err error) {
 func (ctx *Ctx) CheckSession() Rule {
 	msg := ctx.Value.(*tgba.Message)
 	return func(ctx2 *Ctx) bool {
-		msg2, ok := ctx.Value.(*tgba.Message)
+		msg2, ok := ctx2.Value.(*tgba.Message)
 		if !ok || msg.From == nil || msg.Chat == nil || msg2.From == nil || msg2.Chat == nil { // 确保无空
 			return false
 		}

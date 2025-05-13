@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unsafe"
 
 	"github.com/FloatTech/floatbox/process"
 	ctrl "github.com/FloatTech/zbpctrl"
@@ -18,7 +17,7 @@ func newctrl(service string, o *ctrl.Options[*Ctx]) Rule {
 	c := m.NewControl(service, o)
 	return func(ctx *Ctx) bool {
 		ctx.State["manager"] = c
-		return c.Handler(uintptr(unsafe.Pointer(ctx)), ctx.Message.Chat.ID, ctx.value.Elem().FieldByName("From").Elem().FieldByName("ID").Int())
+		return c.Handler(ctx.Message.Chat.ID, ctx.value.Elem().FieldByName("From").Elem().FieldByName("ID").Int())
 	}
 }
 

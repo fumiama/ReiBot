@@ -9,12 +9,12 @@ type FutureEvent struct {
 }
 
 // NewFutureEvent 创建一个FutureEvent, 并返回其指针
-func NewFutureEvent(typ string, prio int, Block bool, rule ...Rule) *FutureEvent {
+func NewFutureEvent(typ string, prio int, blk bool, rule ...Rule) *FutureEvent {
 	return &FutureEvent{
 		Type:     typ,
 		Priority: prio,
 		Rule:     rule,
-		Block:    Block,
+		Block:    blk,
 	}
 }
 
